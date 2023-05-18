@@ -44,13 +44,52 @@ html{
     color: black;
 }
 
-#srodek{
-    background: #23282c;
-    text-align: justify-all;
-    padding: 0.5rem;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
 
+#srodek{
+    width: 95%;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    margin-inline: 2.5%;
+    float:left;
+    background: #23282c;
+    text-align: center;
+}
+
+#okladka{
+    float:left;
+    margin-left: 1rem;
+}
+
+
+#film_box{
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    float:left;
+}
+
+.tytul{
+    float:left;
+}
+
+.tresc{
+    float:left;
+}
+
+
+ul{
+    list-style-type: none;
+}
+li{
+    list-style-type: none;
+    list-style: none;
+}
+
+.tytul_filmu{
+    color: white;
+}
+
+.opis_filmu{
+    color:white;
 }
 
 input {
