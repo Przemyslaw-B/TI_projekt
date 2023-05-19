@@ -45,42 +45,44 @@ html{
 }
 
 
-#srodek{
+.srodek{
     width: 95%;
     margin-top: 2rem;
     margin-bottom: 2rem;
     margin-inline: 2.5%;
-    float:left;
     background: #23282c;
     text-align: center;
 }
 
-#okladka{
-    float:left;
-    margin-left: 1rem;
-}
-
-#zdjecie{
+.zdjecie{
     max-width: 15rem;
     max-height: 20rem;
+    text-align: left;
     border: 1rem black;
     object-fit: fill;
 }
 
 
-#film_box{
+.film_box{
+    text-align: left;
     margin-top: 2rem;
     margin-bottom: 2rem;
-    float: none;
 }
 
-.tytul{
-    float:left;
+
+.film_box>li{
+    display: inline;
+    margin-top: 2rem;
+    text-align: left;
 }
 
-.tresc{
-    float:left;
+.tresc>li{
+    color: white;
 }
+
+
+
+
 
 
 ul{
@@ -88,14 +90,6 @@ ul{
 }
 li{
     list-style: none;
-}
-
-.tytul_filmu{
-    color: white;
-}
-
-.opis_filmu{
-    color:white;
 }
 
 input {
@@ -108,4 +102,13 @@ input {
 
 button zaloguj{
     float: right;
+}
+
+.test>li{
+    text-align: left;
+    display: inline;
+}
+
+.test2>li{
+    text-align: left;
 }
