@@ -13,7 +13,6 @@ html{
 
 #pasekMenu {
     width: 100%;
-    background: #175f41;
     font-size: 1.5rem;
     height: 2.5rem;
     margin-top: 1rem;
@@ -46,21 +45,25 @@ html{
 
 
 .srodek{
-    width: 95%;
+    width: 80%;
     margin-top: 2rem;
     margin-bottom: 2rem;
-    margin-inline: 2.5%;
+    margin-inline: 10%;
     background: #23282c;
     text-align: center;
 }
 
 .zdjecie{
+    margin-top: 1rem;
+    margin-bottom: 1rem;
     max-width: 15rem;
     max-height: 20rem;
     text-align: left;
     border: 1rem black;
     object-fit: fill;
+    color: white;
 }
+
 
 
 .film_box{
@@ -71,18 +74,32 @@ html{
 
 
 .film_box>li{
-    display: inline;
-    margin-top: 2rem;
+    
+    display: inline-block;
+    vertical-align: top;
+    color: white;
     text-align: left;
 }
 
+
 .tresc>li{
     color: white;
+    display: block;
 }
 
+.tytul{
+    font: 2rem "Times New Roman", serif;
+    margin-left: 1rem;
+    margin-top: 1rem;
+    color: white;
+    
+}
 
-
-
+.opis{
+    display: block;
+    margin-top: 1rem;
+    color: white;
+}
 
 
 ul{
@@ -100,15 +117,20 @@ input {
     color: #6c757d;
 }
 
-button zaloguj{
+.przypomnij>p{
+    color: #78818a;
+    margin-right: 1rem;
+    margin-top: 0.5rem;
+    font-size: 1rem;
+    text-decoration-line: underline;
     float: right;
 }
 
-.test>li{
-    text-align: left;
-    display: inline;
+
+button zaloguj{
+    text-align: right;
 }
 
-.test2>li{
-    text-align: left;
+button rejestruj{
+    text-align: right;;
 }
