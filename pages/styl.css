@@ -38,7 +38,7 @@ html{
     padding-top: 0.25rem;
 }
 
-#pasekMenu a{
+#main_page a{
     text-decoration: none;
     color: black;
 }
@@ -219,53 +219,61 @@ button wyloguj{
     height: 2rem;
 }
 
-
-
-.profile {
+/* Dropdown Button */
+.dropbtn {
     background: #2b3035;
-    float: right;
-    margin-top: 0.5rem;
-    margin-right:2rem;
     color: #6c757d;
     width: 6rem;
-  /*padding: 16px; */
-  /* font-size: 16px; */
-  /*border: none;*/
+    margin-right: 1.5rem;
+    margin-top: 0.5rem;
 }
 
 /* The container <div> - needed to position the dropdown content */
 .dropdown {
   float: right;
-  display: inline-block;
+  margin-right: 2rem;
+  /*display: inline-block;*/
 }
 
 /* Dropdown Content (Hidden by Default) */
-.profile-content {
+.dropdown-content {
   display: none;
   position: absolute;
   background-color: #2b3035;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  color: #6c757d;
+  /*box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);*/
   z-index: 1;
 }
 
 /* Links inside the dropdown */
-.profile-content a {
-  color: #6c757d;
-  padding: 12px 16px;
+.dropdown-content a {
+  /*padding: 12px 16px;*/
   /*text-decoration: none;*/
-  text-decoration-color: #6c757d;
+  display: block;
+}
+
+.dropdown-content a {
+    color: #6c757d;
+    font-size: 1.5rem;
+  /*padding: 12px 16px;*/
+  text-decoration: none;
   display: block;
 }
 
 /* Change color of dropdown links on hover */
-.profile-content a:hover {
-    background-color: #2b3035;
+.dropdown-content a:hover {
+    background-color: #23282c;
     color: #6c757d;
 }
 
 /* Show the dropdown menu on hover */
-.dropdown:hover .profile-content {display: block;}
+.dropdown:hover .dropdown-content {
+    display: block;
+    color: black;
+}
 
 /* Change the background color of the dropdown button when the dropdown content is shown */
-.dropdown:hover .profile {background-color: #2b3035;}
+.dropdown:hover .dropbtn {
+    background-color: #2b3035;
+    
+}
