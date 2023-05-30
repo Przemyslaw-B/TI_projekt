@@ -8,8 +8,12 @@ function logowanie(){
             let login=document.getElementById('wsp_login').value;
             let haslo=document.getElementById('wsp_haslo').value;
             const http = new XMLHttpRequest()
-            http.open("GET", "http://localhost:3000/login");
-            http.send();
+            http.open("POST", "http://localhost:3000/login/potwierdz");
+            http.setRequestHeader('Content-type', 'application/json')
+            var params = new Object();
+            params.paramLogin = login;
+            params.paramPassword = haslo;
+            http.send(JSON.stringify(params));
             window.location="http://localhost:3000/sesja";
             http.onload = () => console.log(http.responseText);
         });

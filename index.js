@@ -6,15 +6,25 @@ app.listen(port, () => console.log(`Oczekuje na porcie ${port}...`))
 
 app.use(express.json());
 
-const ejs=require('ejs');
+//const ejs=require('ejs');
 const path= require("path");
 
 app.set('view engine', 'ejs');  //konieczne doinstalowanie modułu
 
 app.set('views', './pages');
 
+const sqlite3 = require('sqlite3').verbose();
+let db=new sqlite3.Database('./pages/DB/database', (err) =>{
+    if(err){
+        return console.error(err.message);
+    }
+    console.log('Connected to the SQLite database.');
+});
+
 const expressSession = require('express-session');
 app.use(express.static(path.join(__dirname, 'pages')));
+const session = require('express-session');
+
 app.get('/', (req, res) => {
     res.render('views/index', {images: 'plakat'});
 });
@@ -24,6 +34,7 @@ app.get('/login', (req, res) => {
 });
 
 app.get('/sesja', (req, res) => {
+    let sessionValue;
     res.render('views/loggedin', {images: 'plakat'});
 });
 
@@ -33,5 +44,23 @@ app.get('/reset', (req, res) => {
 
 app.get('/rejestracja', (req, res) => {
     res.render('views/utworz_konto', {images: 'plakat'});
+});
+
+app.post('/login/potwierdz', (req, res) =>{
+    let username=req.body.paramLogin;
+    let password=req.body.paramPassword;
+
+    console.log(`logowanie jako ${username} ${password}`);
+    if(username===password){
+        db.all(`Select id from users where login=? and password=?;`,[username, password], (err, rows)=>{
+            rows.forEach((row)=>{
+                console.log(`Wynik: ${row.id}`);
+            })
+            if(err){
+                console.log('ERROR!', err);
+            }
+        });
+    }
+
 });
 
