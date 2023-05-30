@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Baza Repertuarów Krakowskich Kin</title>
+    <link rel="stylesheet" type="text/css" href="../css/styl.css"/>
+    <script type="text/javascript" src="/scripts/skrypt.js"></script>
+</head>
+<body onload="logowanie();">
+<div id="kontener">
+    <div id="pasekMenu">
+        <ul>
+            <li id="main_page"><a href='http://localhost:3000/'> Strona główna</a></li>
+            <div id="przycisk_rejestracji">
+                <input type="button" id="rejestruj" value="Utwórz konto">
+            </div>
+            <div id="przycisk_logowania">
+                <input type="button" id="loguj" value="Zaloguj">
+            </div>
+            <form id="dane" name="dane">
+                <input placeholder="Hasło" type ="password" id="wsp_haslo" name="wb">
+                <input placeholder="Login" type ="text" id="wsp_login" name="wa">
+            </form>
+            <a class="przypomnij" href='http://localhost:3000/reset'><p>nie pamiętam hasła</p></a>
+
+        </ul>
+    </div>
+    <div class="srodek">
+
+
+        <form>
+            <ul>
+                <li class="reset_naglowek"><p>Uzupełnij formularz w celu odzyskania hasła.</p></li>
+                <li class="uzytkownik"><input placeholder="Nazwa użytkownika" type ="text" id="reset_uzytkownik" name="L"></li>
+                <li class="mail"><input placeholder="Adres email" type ="text" id="reset_mail" name="M"></li>
+                <li class="potwierdz"><input type="button" id="ok" value="potwierdź"></li>
+            </ul>
+        </form>
+
+    </div>
+
+
+</div>
+</body>
+</html>

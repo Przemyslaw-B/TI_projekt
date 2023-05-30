@@ -38,6 +38,12 @@ html{
     padding-top: 0.25rem;
 }
 
+#pasekMenu a{
+    text-decoration: none;
+    color: black;
+    margin-top: 0.5rem;
+}
+
 #main_page a{
     text-decoration: none;
     color: black;
@@ -210,6 +216,40 @@ button wyloguj{
 }
 
 #ok{
+    color: #6c757d;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    background: #2b3035;
+    text-align: center;
+    width: 10rem;
+    height: 2rem;
+}
+
+#rejestracja_uzytkownik{
+    background: #2b3035;
+    margin-top: 1rem;
+    color: #6c757d;
+    width: 20rem;
+    height: 2rem;
+}
+
+#rejestracja_haslo{
+    background: #2b3035;
+    margin-top: 1rem;
+    color: #6c757d;
+    width: 20rem;
+    height: 2rem;
+}
+
+#rejestracja_mail{
+    background: #2b3035;
+    margin-top: 1rem;
+    color: #6c757d;
+    width: 20rem;
+    height: 2rem;
+}
+
+#potwierdz_rejestracje{
     color: #6c757d;
     margin-top: 2rem;
     margin-bottom: 2rem;
