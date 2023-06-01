@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Baza Repertuarów Krakowskich Kin</title>
+    <link rel="stylesheet" type="text/css" href="../css/styl.css"/>
+    <script type="text/javascript" src="/scripts/skrypt.js"></script>
+</head>
+<body onload="logowanie();">
+<div id="kontener">
+    <div id="pasekMenu">
+        <ul>
+            <li id="main_page"><a href='http://localhost:3000/'> Strona główna</a></li>
+            <div id="przycisk_wylogowania">
+                <input type="button" id="wyloguj" value="Wyloguj">
+            </div>
+
+            <div class="dropdown">
+                <button class="dropbtn">Profil</button>
+                <div class="dropdown-content">
+                    <a href="#">Link 1</a>
+                    <a href="#">Link 2</a>
+                    <a href="#">Link 3</a>
+                </div>
+            </div>
+
+            <div class="dropdown">
+                <button class="dropbtn">Panel Administratora</button>
+                <div class="dropdown-content">
+                    <a href="#">Dodaj kino</a>
+                    <a href="#">Dodaj film</a>
+                </div>
+            </div>
+
+        </ul>
+    </div>
+    <div class="srodek">
+
+
+        <form>
+            <ul>
+                <li class="reset_naglowek"><p>Uzupełnij formularz w celu dodania kina.</p></li>
+                <li class="uzytkownik"><input placeholder="Nazwa kina" type ="text" id="dodaj_kinp" name="L"></li>
+                <li class="potwierdz"><input type="button" id="ok" value="potwierdź"></li>
+            </ul>
+        </form>
+
+    </div>
+
+
+</div>
+</body>
+</html>
