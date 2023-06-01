@@ -263,7 +263,7 @@ button wyloguj{
 .dropbtn {
     background: #2b3035;
     color: #6c757d;
-    width: 6rem;
+    min-width: 6rem;
     margin-right: 1.5rem;
     margin-top: 0.5rem;
 }
