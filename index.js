@@ -6,6 +6,35 @@ app.listen(port, () => console.log(`Oczekuje na porcie ${port}...`))
 
 app.use(express.json());
 
+
+
+//COOKIES
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+app.use(cookieParser('kluczSesji'));
+app.use(bodyParser.urlencoded({extended: true}));
+
+//SESJA
+const session = require('express-session');
+app.use(session({resave: true, saveUninitialized: true, secret: 'kluczSesji'}));
+
+app.use('/', (req,res) =>{
+    let cookieValue;
+    if(!req.cookies.ciasteczkoSesji){
+        cookieValue = "INFORMACJA" + new Date().toString();
+        res.cookie('ciasteczkoSesji', cookieValue, {signed: true});
+    }else{
+        cookieValue = req.cookies.ciasteczkoSesji;
+    }
+    res.render("ciastko", {cookieValue: cookieValue});
+});
+
+
+
+
+
+
+
 //const ejs=require('ejs');
 const path= require("path");
 
@@ -24,6 +53,17 @@ let db=new sqlite3.Database('./pages/DB/database', (err) =>{
 const expressSession = require('express-session');
 app.use(express.static(path.join(__dirname, 'pages')));
 const session = require('express-session');
+
+
+
+
+
+
+
+
+
+
+
 
 app.get('/', (req, res) => {
     res.render('views/index', {images: 'plakat'});
