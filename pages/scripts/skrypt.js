@@ -5,16 +5,25 @@ function logowanie(){
     const element_loguj=document.getElementById('loguj');
     if(element_loguj){
         element_loguj.addEventListener('click', function(event) {
-            let login=document.getElementById('wsp_login').value;
-            let haslo=document.getElementById('wsp_haslo').value;
+            let username=document.getElementById('wsp_login').value;
+            let password=document.getElementById('wsp_haslo').value;
             const http = new XMLHttpRequest()
             http.open("POST", "http://localhost:3000/login/potwierdz");
+            //http.open("GET", `http://localhost:3000/login/potwierdz/${username}/${password}`);
+            //http.send();
+            //http.open("POST", "http://localhost:3000/tajneCiastko");
+            //http.send();
             http.setRequestHeader('Content-type', 'application/json')
             var params = new Object();
-            params.paramLogin = login;
-            params.paramPassword = haslo;
+            params.paramLogin = username;
+            params.paramPassword = password;
+            //http.send(params);
             http.send(JSON.stringify(params));
+            //window.location=`http://localhost:3000/login/potwierdz/${username}/${password}`;
+            //http.onload = () => console.log(http.responseText);
             window.location="http://localhost:3000/sesja";
+            //window.location="http://localhost:3000/json";
+            //window.location=`http://localhost:3000/login/potwierdz/${username}/${password}`;
             http.onload = () => console.log(http.responseText);
         });
     }

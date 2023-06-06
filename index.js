@@ -11,24 +11,39 @@ app.use(express.json());
 //COOKIES
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-app.use(cookieParser('kluczSesji'));
+app.use(cookieParser('ciasteczkoSesji'));
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(cookieParser());
 
-//SESJA
-const session = require('express-session');
-app.use(session({resave: true, saveUninitialized: true, secret: 'kluczSesji'}));
-
-app.use('/', (req,res) =>{
+app.use('/ciastko', (req,res) =>{
     let cookieValue;
     if(!req.cookies.ciasteczkoSesji){
-        cookieValue = "INFORMACJA" + new Date().toString();
+        cookieValue = "ciastko" + new Date().toString();
         res.cookie('ciasteczkoSesji', cookieValue, {signed: true});
     }else{
         cookieValue = req.cookies.ciasteczkoSesji;
     }
+
+    if(!req.cookies.ciasteczkoId){
+        cookieValue = "-1".toString();
+        res.cookie('ciasteczkoId', cookieValue, {signed: true});
+    }else{
+        cookieValue = req.cookies.ciasteczkoId;
+    }
     res.render("ciastko", {cookieValue: cookieValue});
 });
 
+
+app.use('/ciastkoId', (req,res) =>{
+    let cookieValue;
+    if(!req.cookies.ciasteczkoId){
+        cookieValue = "-1".toString();
+        res.cookie('ciasteczkoId', cookieValue, {signed: true});
+    }else{
+        cookieValue = req.cookies.ciasteczkoId;
+    }
+    res.render("ciastko", {cookieValue: cookieValue});
+});
 
 
 
@@ -50,16 +65,9 @@ let db=new sqlite3.Database('./pages/DB/database', (err) =>{
     console.log('Connected to the SQLite database.');
 });
 
-const expressSession = require('express-session');
 app.use(express.static(path.join(__dirname, 'pages')));
-const session = require('express-session');
 
-
-
-
-
-
-
+app.use(bodyParser.json());
 
 
 
@@ -75,7 +83,27 @@ app.get('/login', (req, res) => {
 
 app.get('/sesja', (req, res) => {
     let sessionValue;
+    //let cookieValue = "ciastko" + new Date().toString();
+    let cookieValue;
+    if(!req.cookies.ciasteczkoSesji){
+        cookieValue = "-1".toString();
+
+    }else{
+        cookieValue = req.cookies.ciasteczkoSesji;
+    }
+    res.cookie('ciasteczkoSesji', cookieValue, {signed: true});
+
     res.render('views/loggedin', {images: 'plakat'});
+
+});
+
+
+app.post('/tajneCiastko', (req, res) => {
+    let cookieValue;
+    console.log(`aktywowano tajne ciastko!`);
+    cookieValue = "supertajnaINFORMACJA";
+    res.cookie('TAJNEciastkoi', cookieValue);
+    res.render('views/loggedin', {cookieValue: cookieValue});
 });
 
 app.get('/reset', (req, res) => {
@@ -86,21 +114,56 @@ app.get('/rejestracja', (req, res) => {
     res.render('views/utworz_konto', {images: 'plakat'});
 });
 
-app.post('/login/potwierdz', (req, res) =>{
-    let username=req.body.paramLogin;
-    let password=req.body.paramPassword;
-
+app.post('/login/potwierdz', async (req, res) => {
+    let username = req.body.paramLogin;
+    let password = req.body.paramPassword;
     console.log(`logowanie jako ${username} ${password}`);
+    var re;
+    const question = await db.all('Select rank from users where login=? and password=?;', [username, password], (err, rows) => {
+        rows.forEach((row) => {
+            console.log(`Wynik: ${row.rank}`);
+            re = row.rank + "";
+        });
+        if (err) {
+            console.log('ERROR!', err);
+        }
+    });
+    let cookieValue = `${re}`.toString();
+    if (!req.cookies.TAJNEciastko) {
+        res.cookie('TAJNEciastko', cookieValue);
+    }
+    console.log(`Wynik tajnego ciastka: ${cookieValue}`);
+    res.render('views/loggedin', {cookieValue: cookieValue});
+
+});
+
+app.get('/login/potwierdz/:username/:password', (req, res) =>{
+    //let username=req.body.paramLogin;
+    //let password=req.body.paramPassword;
+    var username = req.params.username;
+    var password = req.params.password;
+    let cookieValue;
+    console.log(`logowanie jako: ${username} ${password}`);
     if(username===password){
-        db.all(`Select id from users where login=? and password=?;`,[username, password], (err, rows)=>{
+        db.all('Select rank from users where login=? and password=?;',[username, password], (err, rows)=>{
             rows.forEach((row)=>{
-                console.log(`Wynik: ${row.id}`);
-            })
+                console.log(`Wynik: ${row.rank}`);
+                cookieValue = `${row.rank}`.toString();
+                //res.cookie('user', username, {maxAge: 10800}).send('cookie set');
+                //res.cookie('ciasteczkoId', `${row.rank}`.toString(), {signed: true});
+
+            });
+
+
             if(err){
                 console.log('ERROR!', err);
+                cookieValue = `brak` + new Date().toString();
             }
+
         });
     }
+    res.cookie('ciasteczkoSesji', cookieValue, {signed: true});
+    res.render('views/loggedin', {images: 'plakat'});
 
 });
 
