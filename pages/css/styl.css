@@ -241,6 +241,14 @@ button wyloguj{
     height: 2rem;
 }
 
+#rejestracja_powt_haslo{
+    background: #2b3035;
+    margin-top: 1rem;
+    color: #6c757d;
+    width: 20rem;
+    height: 2rem;
+}
+
 #rejestracja_mail{
     background: #2b3035;
     margin-top: 1rem;
