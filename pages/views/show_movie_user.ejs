@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Baza Repertuarów Krakowskich Kin</title>
+    <link rel="stylesheet" type="text/css" href="../css/styl.css"/>
+    <script type="text/javascript" src="/scripts/skrypt.js"></script>
+</head>
+<body onload="logowanie();">
+<div id="kontener">
+    <div id="pasekMenu">
+        <ul>
+            <li id="main_page"><a href='http://localhost:3000/'> Strona główna</a></li>
+            <div id="przycisk_wylogowania">
+                <input type="button" id="wyloguj" value="Wyloguj">
+            </div>
+
+            <div class="dropdown">
+                <button class="dropbtn">Profil</button>
+                <div class="dropdown-content">
+                    <a href="#">Link 1</a>
+                    <a href="#">Link 2</a>
+                    <a href="#">Link 3</a>
+                </div>
+            </div>
+
+        </ul>
+    </div>
+
+    <div class="srodek">
+        <ul class="film_box">
+            <li><img class="zdjecie" src="../plakat/<%=lista[0].plakat%>"></li>
+            <li><ul class="tresc">
+                    <li class="tytul"><%=lista[0].tytul%></li>
+                    <li class="opis"><p id="opis_tresc"><%=lista[0].opis%></p></li>
+                </ul></li>
+        </ul>
+    </div>
+
+
+</div>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Baza Repertuarów Krakowskich Kin</title>
+    <link rel="stylesheet" type="text/css" href="../css/styl.css"/>
+    <script type="text/javascript" src="/scripts/skrypt.js"></script>
+</head>
+<body onload="logowanie();">
+<div id="kontener">
+    <div id="pasekMenu">
+        <ul>
+            <li id="main_page"><a href='http://localhost:3000/'> Strona główna</a></li>
+            <div id="przycisk_wylogowania">
+                <input type="button" id="wyloguj" value="Wyloguj">
+            </div>
+
+            <div class="dropdown">
+                <button class="dropbtn">Panel Administratora</button>
+                <div class="dropdown-content">
+                    <a href="http://localhost:3000/dodajKino">Dodaj kino</a>
+                    <a href="http://localhost:3000/dodajFilm">Dodaj film</a>
+                </div>
+            </div>
+
+        </ul>
+    </div>
+
+    <div class="srodek">
+        <ul class="tresc">
+
+            <li>
+                <ul class="film_box">
+                    <li class="tytul_change"><%=lista[0].tytul%></li>
+                </ul>
+            </li>
+
+            <li>
+                <ul class="film_box">
+                    <li><img class="zdjecie" src="../plakat/<%=lista[0].plakat%>"></li>
+                    <li id = "dodaj_plik">
+                        <div id = "dodawanie_pliku">
+                            <p><input type="file"  accept="image/*" name="image" id="file"  onchange="loadFile(event)" style="display: none;"></p>
+                            <p><label for="file" style="cursor: pointer;">Kliknij tutaj aby dodać nową okładkę.</label></p>
+                        </div>
+
+                        <script>
+                            var loadFile = function(event) {
+                                var image = document.getElementById('output');
+                                image.src = URL.createObjectURL(event.target.files[0]);
+                            };
+                        </script>
+                    </li>
+                </ul>
+            </li>
+
+            <li>
+                <ul class="film_box">
+                    <li class="opis_change"><p id="opis_tresc"><%=lista[0].opis%></p></li>
+                </ul>
+            </li>
+
+
+
+        </ul>
+    </div>
+
+
+</div>
+</body>
+</html>
