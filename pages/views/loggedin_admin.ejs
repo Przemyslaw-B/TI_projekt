@@ -16,34 +16,26 @@
             </div>
 
             <div class="dropdown">
-                <button class="dropbtn">Profil</button>
-                <div class="dropdown-content">
-                    <a href="#">Link 1</a>
-                    <a href="#">Link 2</a>
-                    <a href="#">Link 3</a>
-                </div>
-            </div>
-
-            <div class="dropdown">
                 <button class="dropbtn">Panel Administratora</button>
                 <div class="dropdown-content">
-                    <a href="#">Dodaj kino</a>
-                    <a href="#">Dodaj film</a>
+                    <a href="http://localhost:3000/dodajKino">Dodaj kino</a>
+                    <a href="http://localhost:3000/dodajFilm">Dodaj film</a>
                 </div>
             </div>
 
         </ul>
     </div>
+
     <div class="srodek">
         <ul class="film_box">
-            <% for(var i=0; i<10; i++) {%>
-                <ul class="film_box">
-                    <li><img class="zdjecie" src="../plakat/joker.jpg" alt="tutaj jest zdjecie"></li>
-                    <li><ul class="tresc">
-                            <li class="tytul">Joker</li>
-                            <li class="opis">Tutaj jest opis</li>
-                        </ul></li>
-                </ul>
+            <% for(i=0; i < amount; i++) {%>
+            <ul class="film_box">
+                <li><a href ='http://localhost:3000/showMovie/<%=lista[i].movieId%>' ><img class="zdjecie" src="../plakat/<%=lista[i].plakat%>" alt="tutaj jest zdjecie"></a></li>
+                <li><ul class="tresc">
+                        <li class="tytul"><%=lista[i].tytul%></li>
+                        <li class="opis"><p id="opis_tresc"><%=lista[i].opis%></p></li>
+                    </ul></li>
+            </ul>
             <% } %>
         </ul>
     </div>

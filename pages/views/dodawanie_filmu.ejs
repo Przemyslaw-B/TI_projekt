@@ -16,19 +16,10 @@
             </div>
 
             <div class="dropdown">
-                <button class="dropbtn">Profil</button>
-                <div class="dropdown-content">
-                    <a href="#">Link 1</a>
-                    <a href="#">Link 2</a>
-                    <a href="#">Link 3</a>
-                </div>
-            </div>
-
-            <div class="dropdown">
                 <button class="dropbtn">Panel Administratora</button>
                 <div class="dropdown-content">
-                    <a href="#">Dodaj kino</a>
-                    <a href="#">Dodaj film</a>
+                    <a href="http://localhost:3000/dodajKino">Dodaj kino</a>
+                    <a href="http://localhost:3000/dodajFilm">Dodaj film</a>
                 </div>
             </div>
 
@@ -37,21 +28,43 @@
     <div class="srodek">
 
 
+
         <form>
-            <ul>
+            <ul id="panel">
+                <li id="formularz_zdjecie">
+                <div id="div_IMG">
+                    <p><img id="output" width="200" /></p>
+                </div>
+                </li>
+
+            <li><ul id="formularz_dodaj_film">
                 <li class="reset_naglowek"><p>Uzupełnij formularz w celu dodania filmu.</p></li>
                 <li class="uzytkownik"><input placeholder="Nazwa filmu" type ="text" id="dodaj_tytul" name="T"></li>
+                <li class="uzytkownik"><input placeholder="rok produkcji" type ="text" id="dodaj_rok" name="T"></li>
+                <li class="uzytkownik"><input placeholder="reżyser" type ="text" id="dodaj_rezyser" name="T"></li>
                 <li class="mail"><input placeholder="Opis" type ="text" id="dodaj_opis" name="O"></li>
                 <li class="mail"><input placeholder="Kina" type ="text" id="dodaj_kina" name="K"></li>
-                <li>Proszę dodać okładkę.</li>
-                <li> <form action="..." enctype="multipart/form-data" accept="image/jpg">
-                        <div>
-                            <input type="file" size="40" name="plik" />
-                        </div>
-                    </form></li>
-                <li class="potwierdz"><input type="button" id="ok" value="potwierdź"></li>
+                <li id = "informacja_okladka">Proszę dodać okładkę.</li>
+                <li id = "dodaj_plik">
+                    <div id = "dodawanie_pliku">
+                        <p><input type="file"  accept="image/*" name="image" id="file"  onchange="loadFile(event)" style="display: none;"></p>
+                        <p><label for="file" style="cursor: pointer;">Kliknij tutaj aby dodać okładkę.</label></p>
+                    </div>
+                    <script>
+                        var loadFile = function(event) {
+                            var image = document.getElementById('output');
+                            image.src = URL.createObjectURL(event.target.files[0]);
+                        };
+                    </script>
+                <li class="potwierdz"><input type="button" id="ok_film" value="potwierdź"></li>
+
+
+
+            </ul>
+            </li>
             </ul>
         </form>
+
 
     </div>
 

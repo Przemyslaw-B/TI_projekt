@@ -2,6 +2,13 @@
 function logowanie(){
 
     var user = '{{request.user}}';
+
+    var amount = async function getAmount(){
+        var il = await getMovieAmount(db);
+        return il;
+    }
+
+
     const element_loguj=document.getElementById('loguj');
     if(element_loguj){
         element_loguj.addEventListener('click', function(event) {
@@ -61,6 +68,60 @@ function logowanie(){
             http.onload = () => console.log(http.responseText);
         });
     }
+
+    const element_zatwierdz_kino=document.getElementById('ok');
+    if(element_zatwierdz_kino){
+        element_zatwierdz_kino.addEventListener('click', function(event) {
+            let nazwaKina=document.getElementById('dodaj_kino').value;
+            const http = new XMLHttpRequest()
+            http.open("POST", "http://localhost:3000/dodajKino");
+            http.setRequestHeader('Content-type', 'application/json')
+            var params = new Object();
+            params.paramNazwaKina = nazwaKina;
+            http.send(JSON.stringify(params));
+            //window.location="http://localhost:3000/";
+            http.onload = () => console.log(http.responseText);
+        });
+    }
+
+    const element_dodaj_film=document.getElementById('ok_film');
+    if(element_dodaj_film){
+        element_dodaj_film.addEventListener('click', function(event) {
+            let nazwaFilmu=document.getElementById('dodaj_tytul').value;
+            let rokProdukcji=document.getElementById('dodaj_rok').value;
+            let rezyser=document.getElementById('dodaj_rezyser').value;
+            let opis=document.getElementById('dodaj_opis').value;
+            let kina = document.getElementById('dodaj_kina').value;
+            const http = new XMLHttpRequest()
+            http.open("POST", "http://localhost:3000/dodajFilm");
+            http.setRequestHeader('Content-type', 'application/json')
+            var params = new Object();
+            params.paramNazwaFilmu = nazwaFilmu;
+            params.paramRokProdukcji = rokProdukcji;
+            params.paramRezyser = rezyser;
+            params.paramOpis = opis;
+            params.paramKina = kina;
+            http.send(JSON.stringify(params));
+            //window.location="http://localhost:3000/";
+            http.onload = () => console.log(http.responseText);
+        });
+    }
+
+    function getMovieAmount(){
+        var amount=3;
+        let cookieName = "userData";
+        //amount=document.cookie.get
+        return amount;
+    }
+
+    const getCookie = (name) => {
+        return document.cookie.split("; ").reduce((r, v) => {
+            res.cookies.userData;
+            const parts = v.split("=");
+            return parts[0] === name ? decodeURIComponent(parts[1]) : r;
+        }, "");
+    };
+
 
 
 }
