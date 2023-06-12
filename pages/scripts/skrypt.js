@@ -6,6 +6,7 @@ function logowanie(){
     var amount = async function getAmount(){
         var il = await getMovieAmount(db);
         return il;
+        let file = document.getElementById('output'); //????
     }
 
 

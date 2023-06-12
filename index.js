@@ -186,8 +186,6 @@ async function create_one_movie_list(db, movieId){
     let path = await get_movie_plakat(db, id);
     let rok_produkcji = await get_movie_rok_produkcji(db, id);
     let rezyser = await get_movie_rezyser(db, id);
-    console.log(`Print z tworzenia listy: id - ${id}`);
-    console.log(`Print z tworzenia listy: name - ${name}`);
     lista.push({tytul: name, opis: opis, plakat: path, movieId: id, rezyser: rezyser, rok_produkcji: rok_produkcji});
     return lista;
 }
@@ -359,11 +357,6 @@ async function check_nazwaFilmu(db, nazwaFilmu){
         });
     });
 }
-
-app.get('/cookieAmount', (req, res) => {
-    let amount = req.cookies["movieAmount"];
-    console.log(`Ilość filmów: ${amount}`);
-});
 
 
 
