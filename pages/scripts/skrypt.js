@@ -88,6 +88,8 @@ function logowanie(){
     const element_dodaj_film=document.getElementById('ok_film');
     if(element_dodaj_film){
         element_dodaj_film.addEventListener('click', function(event) {
+            //let plik = document.getElementById('output');
+            //plik.src = URL.createObjectURL(event.target.files[0]);
             let nazwaFilmu=document.getElementById('dodaj_tytul').value;
             let rokProdukcji=document.getElementById('dodaj_rok').value;
             let rezyser=document.getElementById('dodaj_rezyser').value;
@@ -102,6 +104,7 @@ function logowanie(){
             params.paramRezyser = rezyser;
             params.paramOpis = opis;
             params.paramKina = kina;
+
             http.send(JSON.stringify(params));
             //window.location="http://localhost:3000/";
             http.onload = () => console.log(http.responseText);

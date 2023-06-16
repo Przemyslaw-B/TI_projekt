@@ -1,8 +1,11 @@
 const express = require('express');
 const session = require('express-session');
 const multer = require("multer");
-const upload = multer()
+const upload = multer({
+    dest: "./plakat"
+});
 const app=express();
+const fs = require('fs');
 
 const port = process.env.PORT || 3000
 app.listen(port, () => console.log(`Oczekuje na porcie ${port}...`))
@@ -54,7 +57,7 @@ async function get_rank(db, session) {
         db.get('Select rank from users where sesja=?;', [session], (err, row) => {
             if(row){
                 resolve(row.rank);
-            } else {
+            } else{
                 resolve(-1);
             }
             if (err) {
@@ -67,6 +70,22 @@ async function get_rank(db, session) {
 async function get_id(db, username, password){
     return new Promise((resolve, reject) => {
         db.get('Select id from users where login=? and password=?;', [username, password], (err, row) => {
+            if(row){
+                resolve(row.id);
+            }else{
+                resolve(-1);
+            }
+
+            if (err) {
+                console.log('ERROR!', err);
+            }
+        });
+    });
+}
+
+async function get_userId(db, session){
+    return new Promise((resolve, reject) => {
+        db.get('Select id from users where sesja=?;', [session], (err, row) => {
             if(row){
                 resolve(row.id);
             }else{
@@ -160,19 +179,125 @@ async function get_movie_rezyser(db, id){
     });
 }
 
-async function create_movie_list(db, amount){
-    let id = 1;
+async function get_cinema_amount(db, movieId){
+    return new Promise((resolve, reject) => {
+        db.get('Select Count(id_cinema) as ilosc from cinema_movie where id_movie=?;', [movieId], (err, row) => {
+            if(row){
+                resolve(row.ilosc);
+            }else{
+                resolve(-1);
+            }
+
+            if (err) {
+                console.log('ERROR!', err);
+            }
+        });
+    });
+}
+
+async function get_favorite_movie_amount(db, userId){
+    return new Promise((resolve, reject) => {
+        db.get('Select Count(movie_id) as ilosc from users_favorite where user_id=?;', [userId], (err, row) => {
+            if(row){
+                resolve(row.ilosc);
+            }else{
+                resolve(-1);
+            }
+
+            if (err) {
+                console.log('ERROR!', err);
+            }
+        });
+    });
+}
+
+async function get_cinemaNames(db, movieId){
+    let listaNazw =[];
+    return new Promise((resolve, reject) => {
+        db.all('Select nazwa from cinema join cinema_movie on id=id_cinema  where id_movie=?;', [movieId], (err, row) => {
+            row.forEach(function(row){
+                listaNazw.push(row.nazwa);
+            })
+            resolve(listaNazw);
+            if (err) {
+                console.log('ERROR!', err);
+            }
+        });
+    });
+
+}
+
+async function get_movieIDs(db){
+    let listaId =[];
+    return new Promise((resolve, reject) => {
+        db.all('Select id from movies where isPlaying=1;', (err, row) => {
+            row.forEach(function(row){
+                listaId.push(row.id);
+                console.log(`listaId: ${row.id}`);
+            })
+            resolve(listaId);
+            if (err) {
+                console.log('ERROR!', err);
+            }
+        });
+    });
+}
+
+async function get_favorite_movies_id(db, userId){
+    let listaId =[];
+    return new Promise((resolve, reject) => {
+        db.all('Select movie_id as ids from users_favorite where user_id=?;',[userId], (err, row) => {
+            row.forEach(function(row){
+                listaId.push(row.ids);
+            })
+            resolve(listaId);
+            if (err) {
+                console.log('ERROR!', err);
+            }
+        });
+    });
+}
+
+async function create_favorite_movie_list(db, userId){
+    let id = 0;
     let lista = [];
     let name;
     let opis;
     let path;
+    let cinemaAmount;
+    let movieIds = await get_favorite_movies_id(db, userId);
     let movieId;
-    while(id <= amount){
-        movieId = id;
-        name = await get_movie_tyt(db, id);
-        opis = await  get_movie_opis(db, id);
-        path = await get_movie_plakat(db, id);
-        lista.push({tytul: name, opis: opis, plakat: path, movieId: id});
+    let amount = movieIds.length;
+    while(id < amount){
+        name = await get_movie_tyt(db, movieIds[id]);
+        opis = await  get_movie_opis(db, movieIds[id]);
+        path = await get_movie_plakat(db, movieIds[id]);
+        cinemaAmount = await get_cinema_amount(db, movieIds[id]);
+        movieId = movieIds[id];
+        cinemaList = await get_cinemaNames(db, movieIds[id]);
+        lista.push({tytul: name, opis: opis, plakat: path, cinemaAmount: cinemaAmount, movieId: movieId, cinemaList: cinemaList});
+        id++;
+    }
+    return lista;
+}
+
+async function create_movie_list(db, amount){
+    let id = 0;
+    let lista = [];
+    let name;
+    let opis;
+    let path;
+    let movieId = [];
+    movieId = await get_movieIDs(db);
+    let cinemaAmount;
+    let cinemaList;
+    while(id < amount){
+        name = await get_movie_tyt(db, movieId[id]);
+        opis = await  get_movie_opis(db, movieId[id]);
+        path = await get_movie_plakat(db, movieId[id]);
+        cinemaAmount = await get_cinema_amount(db, movieId[id]);
+        cinemaList = await get_cinemaNames(db, movieId[id]);
+        lista.push({tytul: name, opis: opis, plakat: path, cinemaAmount: cinemaAmount, movieId: movieId[id], cinemaList: cinemaList});
         id++;
     }
     return lista;
@@ -186,7 +311,9 @@ async function create_one_movie_list(db, movieId){
     let path = await get_movie_plakat(db, id);
     let rok_produkcji = await get_movie_rok_produkcji(db, id);
     let rezyser = await get_movie_rezyser(db, id);
-    lista.push({tytul: name, opis: opis, plakat: path, movieId: id, rezyser: rezyser, rok_produkcji: rok_produkcji});
+    let cinemaAmount = await get_cinema_amount(db, movieId);
+    let cinemaList = await get_cinemaNames(db, movieId);
+    lista.push({tytul: name, opis: opis, plakat: path, movieId: id, rezyser: rezyser, rok_produkcji: rok_produkcji, cinemaAmount: cinemaAmount, cinemaList: cinemaList});
     return lista;
 }
 
@@ -223,9 +350,9 @@ async function get_session(db, sessionS){
 
 async function get_movies_amount(db){
     return new Promise((resolve, reject) => {
-        db.get('Select id from movies ORDER BY id DESC;', (err, row) => {
+        db.get('Select count(id) as ilosc from movies where isPlaying = 1;', (err, row) => {
             if(row){
-                resolve(row.id);
+                resolve(row.ilosc);
             } else{
                 resolve(-1);
             }
@@ -363,6 +490,11 @@ async function check_nazwaFilmu(db, nazwaFilmu){
 app.get('/mainPage', async (req, res) => {
     let amount = parseInt(req.cookies["movieAmount"]);
     let lista = await create_movie_list(db, amount);
+    console.log(`testowy output: ${lista[0].movieId}`);
+    console.log(`testowy output cinemaAmount: ${lista[0].cinemaAmount}`);
+    console.log(`testowy output cinema 0: ${lista[0].cinemaList[0]}`);
+    console.log(`testowy output cinema 1: ${lista[0].cinemaList[1]}`);
+    console.log(`testowy output movie id: ${lista[0].movieId}`);
     res.render('views/index', {images: 'plakat', amount: amount, lista: lista});
 });
 
@@ -406,10 +538,8 @@ app.get('/logout', async (req, res) => {
 });
 
 app.get('/sesja', async (req, res) => {
-    let sessionValue;
     const sesja_bd = await get_session(db, req.session.id);
-    var amount = 0;
-    amount = await get_movies_amount(db);
+    let amount = await get_movies_amount(db);
     res.cookie("movieAmount", amount);
     if(sesja_bd===req.session.id){
         let rank = await get_rank(db, sesja_bd)
@@ -469,7 +599,7 @@ app.post('/dodajKino', async (req, res) => {
     let nazwaKina = req.body.paramNazwaKina;
     let checkNazwaKina = await check_nazwaKina(db, nazwaKina);
     let rank = await get_rank(db, req.session.id);
-    if(checkNazwaKina === 0 && nazwaKina !== "" && rank == 1){
+    if(checkNazwaKina === 0 && nazwaKina !== "" && rank === 1){
         await insert_kino(db, nazwaKina);
         return res.redirect("/");
     } else{
@@ -479,21 +609,32 @@ app.post('/dodajKino', async (req, res) => {
 
 
 app.post('/dodajFilm', async (req, res) => {
+
+    //let path = req.body.paramPlik;
+    //let plikSrc = req.body.paramPlikSrc;
+   //console.log(path);
+    //console.log(plikSrc);
     let tytul = req.body.paramNazwaFilmu;
     let rokProdukcji = req.body.paramRokProdukcji;
     let rezyser = req.body.paramRezyser;
     let opis = req.body.paramOpis;
     let kina = req.body.paramKina;
-    //console.log(file);
     let rank = await get_rank(db, req.session.id);
     let checkMovie = await check_nazwaFilmu(db, tytul);
+    console.log("Dodaje Film");
+    console.log(tytul);
+    console.log(rokProdukcji);
+    console.log(rezyser);
+    console.log(opis);
+    console.log(kina);
+    console.log(rank);
+    console.log(checkMovie);
 
-    if(rank == 1 && checkMovie === 0 && tytul !== "" && rokProdukcji !== "" && rezyser !== "" && kina !== "" && opis !== ""){
+    if(rank === 1 && checkMovie === 0 && tytul !== "" && rokProdukcji !== "" && rezyser !== "" && kina !== "" && opis !== ""){
         await insert_movie(db, tytul, rokProdukcji, rezyser, opis);
 
         let arrayCinema = kina.split(";");
-        var j=0;
-
+        let j = 0;
         while(j < arrayCinema.length){
 
             let kinoId = await get_cinemaId(db, arrayCinema[j]);
@@ -501,9 +642,8 @@ app.post('/dodajFilm', async (req, res) => {
             if(kinoId !== -1 && filmId !== -1){
                 await insert_cinema_movie(db, kinoId, filmId);
             }
-        j++;
+            j++;
         }
-
         return res.redirect("/");
     } else{
         return res.redirect("/dodajFilm");
@@ -521,11 +661,11 @@ app.get('/dodajKino', async (req, res) => {
 
 app.get('/pokazListe', async (req, res) => {
     //var amount = req.cookies.userData;
-    var nazwa = "";
-    var opis = "";
-    var plakat = "";
+    let nazwa = "";
+    let opis = "";
+    let plakat = "";
     let lista=[];
-    var i=1;
+    let i = 1;
     while(i<6){
 
         console.log(`nazwa: ${nazwa} opis: ${opis} plakat: ${plakat}`);
@@ -556,7 +696,7 @@ app.get('/showMovie/:id', async (req, res) => {
     let session = req.session.id;
     let rank = await get_rank(db, session);
     let lista = await create_one_movie_list(db, id);
-    console.log(`Lista: ${lista[0].rezyser}`);
+    console.log(`fast test rank: ${rank}`);
     if(rank === 1){
         res.render('views/show_movie_admin', {images: 'plakat', lista: lista});
     } else if(rank === 0){
@@ -566,6 +706,21 @@ app.get('/showMovie/:id', async (req, res) => {
     }
 });
 
+app.get('/ulubione', async (req, res) => {
+    let session = req.session.id;
+    console.log(`session: ${session}`);
+    let rank = await get_rank(db, session);
+    let lista =[];
+    if(rank === 0){
+        let id = await get_userId(db, session);
+        let amount = await get_favorite_movie_amount(db, id);
+        lista = await create_favorite_movie_list(db, id);
+        //{tytul: name, opis: opis, plakat: path, cinemaAmount: cinemaAmount, movieId: movieIds[id], cinemaList: cinemaList}
+        res.render('views/favorite', {images: 'plakat', amount: amount, lista: lista});
+    } else{
+        return res.redirect("/");
+    }
+});
 
 
 

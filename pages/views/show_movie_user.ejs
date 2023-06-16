@@ -18,26 +18,52 @@
             <div class="dropdown">
                 <button class="dropbtn">Profil</button>
                 <div class="dropdown-content">
-                    <a href="#">Link 1</a>
-                    <a href="#">Link 2</a>
-                    <a href="#">Link 3</a>
+                    <a href="#">Edytuj profil</a>
+                    <a href='http://localhost:3000/ulubione'>Ulubione</a>
                 </div>
             </div>
 
         </ul>
     </div>
-
-    <div class="srodek">
-        <ul class="film_box">
-            <li><img class="zdjecie" src="../plakat/<%=lista[0].plakat%>"></li>
-            <li><ul class="tresc">
-                    <li class="tytul"><%=lista[0].tytul%></li>
-                    <li class="opis"><p id="opis_tresc"><%=lista[0].opis%></p></li>
-                </ul></li>
-        </ul>
-    </div>
-
-
 </div>
+
+<div class="srodek">
+    <ul class = lista_film>
+        <li>
+            <div class="zawartosc_pojedynczego_filmu">
+            <div class = "okladka">
+                <a><img class="zdjecie" src="../plakat/<%=lista[0].plakat%>"></a>
+            </div>
+            <div class = "zawartosc_film" >
+                <div class="zawartosc_tytul">
+                    <a class="tytul"> <%=lista[0].tytul%></a>
+                </div>
+                <div class="zawartosc_opis" href ='http://localhost:3000/showMovie/<%=lista[0].movieId%>'>
+                    <p class="opis_tresc"><%=lista[0].opis%></p>
+                </div>
+
+                <div class="zawartosc_naglowek">
+                    <p class="zawartosc_tresc_naglowka">Film aktualnie grany w: </p>
+                </div>
+
+                <div class="zawartosc_kina">
+                    <ul class="lista_kin">
+                        <% for(let j=0; j < lista[0].cinemaAmount; j++) {%>
+
+                        <li class="opcja_kina">
+                            <div class = "tlo_kina">
+                                <p class="kino_tresc"><%=lista[0].cinemaList[j]%></p>
+                            </div>
+                        </li>
+                        <% } %>
+                    </ul>
+                </div>
+            </div>
+            </div>
+        </li>
+    </ul>
+</div>
+
+
 </body>
 </html>
