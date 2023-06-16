@@ -1,0 +1,57 @@
+<!-- views/index.ejs -->
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../css/styl.css" />
+    <script type="text/javascript" src="/scripts/skrypt.js"></script>
+
+    <title>Baza Repertuarów Krakowskich Kin</title>
+</head>
+
+
+<div class="srodek">
+    <ul class = lista_film>
+        <% for(let i=0; i < amount; i++) {%>
+        <li>
+            <div class="zawartosc_pojedynczego_filmu">
+                <div class = "okladka">
+                    <a href ='http://localhost:3000/showMovie/<%=lista[i].movieId%>' ><img class="zdjecie" src="../plakat/<%=lista[i].plakat%>"></a>
+                </div>
+                <div class = "zawartosc_film" >
+                    <div class="zawartosc_tytul">
+                        <a class="tytul" href ='http://localhost:3000/showMovie/<%=lista[i].movieId%>'> <%=lista[i].tytul%></a>
+                    </div>
+                    <div class="zawartosc_opis" href ='http://localhost:3000/showMovie/<%=lista[i].movieId%>'>
+                        <p class="opis_tresc"><%=lista[i].opis%></p>
+                    </div>
+
+                    <div class="zawartosc_naglowek">
+                        <p class="zawartosc_tresc_naglowka">Film aktualnie grany w: </p>
+                    </div>
+
+                    <div class="zawartosc_kina">
+                        <ul class="lista_kin">
+                            <% for(let j=0; j < lista[i].cinemaAmount; j++) {%>
+
+                            <li class="opcja_kina">
+                                <div class = "tlo_kina">
+                                    <p class="kino_tresc"><%=lista[i].cinemaList[j]%></p>
+                                </div>
+                            </li>
+                            <% } %>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </li>
+        <% } %>
+    </ul>
+</div>
+
+
+</div>
+</body>
+</html>
