@@ -1,9 +1,31 @@
 const express = require('express');
 const session = require('express-session');
 const multer = require("multer");
+const storage = multer.diskStorage({
+    filename: (req, file, cb) =>{
+        //console.log(file)
+        cb(null, file.originalname)
+        //cb(null, Date.now() + path.extname(file.originalname))
+    },
+    destination: (req, file, cb) =>{
+        cb(null, './pages/plakat')
+    }
+
+})
 const upload = multer({
-    dest: "./plakat"
+    storage: storage,
+    fileFilter: function (req, file, callback) {
+        var ext = path.extname(file.originalname);
+        if(ext !== '.png' && ext !== '.jpg' && ext !== '.gif' && ext !== '.jpeg') {
+            return null
+        }
+        callback(null, true)
+    }
+
 });
+
+
+
 const app=express();
 const fs = require('fs');
 
@@ -490,11 +512,6 @@ async function check_nazwaFilmu(db, nazwaFilmu){
 app.get('/mainPage', async (req, res) => {
     let amount = parseInt(req.cookies["movieAmount"]);
     let lista = await create_movie_list(db, amount);
-    console.log(`testowy output: ${lista[0].movieId}`);
-    console.log(`testowy output cinemaAmount: ${lista[0].cinemaAmount}`);
-    console.log(`testowy output cinema 0: ${lista[0].cinemaList[0]}`);
-    console.log(`testowy output cinema 1: ${lista[0].cinemaList[1]}`);
-    console.log(`testowy output movie id: ${lista[0].movieId}`);
     res.render('views/index', {images: 'plakat', amount: amount, lista: lista});
 });
 
@@ -720,6 +737,17 @@ app.get('/ulubione', async (req, res) => {
     } else{
         return res.redirect("/");
     }
+});
+
+
+//////////////////////////////////////////////////////////
+app.post('/upload',upload.single('image'), (req, res) => {
+    console.log(`sciezka2: ${req.file.originalname}`)
+});
+
+
+app.get('/test',  async (req, res) => {
+    res.render('views/test');
 });
 
 

@@ -126,6 +126,36 @@ function logowanie(){
         }, "");
     };
 
+    //POST TEST
+    const element_test_post_file=document.getElementById('ok_tescik');
+    if(element_test_post_file){
+        element_test_post_file.addEventListener('click', function(event) {
+            //let plik = document.getElementById('output');
+           // plik.src = URL.createObjectURL(event.target.files[0]);
+            //let plikUrl = plik.src;
+
+            //let image = document.getElementById('file');
+            //image.src = URL.createObjectURL(event.target.files[0]);
+
+            const http = new XMLHttpRequest()
+            http.open("POST", "http://localhost:3000/test");
+            //http.setRequestHeader('Content-type', 'multipart/form-data')
+            const formData  = new FormData();
+
+            for(const name in data) {
+                formData.append(name, data[name]);
+            }
+
+            //var params = new Object();
+            //params.paramPlik = image.src;
+           // params.paramPlikURL = plikUrl;
+
+
+            //http.send(JSON.stringify(params));
+            //http.onload = () => console.log(http.responseText);
+        });
+    }
+
 
 
 }
