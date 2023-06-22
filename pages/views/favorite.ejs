@@ -18,7 +18,7 @@
             <div class="dropdown">
                 <button class="dropbtn">Profil</button>
                 <div class="dropdown-content">
-                    <a href="#">Edytuj profil</a>
+                    <a href='http://localhost:3000/wszystkieFilmy'>Baza filmów</a>
                     <a href='http://localhost:3000/ulubione'>Ulubione</a>
                 </div>
             </div>
@@ -39,6 +39,13 @@
                 <div class = "zawartosc_film" >
                     <div class="zawartosc_tytul">
                         <a class="tytul" href ='http://localhost:3000/showMovie/<%=lista[i].movieId%>'> <%=lista[i].tytul%></a>
+                        <button id="button_fav">
+                            <% if(lista[i].isFavorite === 0) {%>
+                            <a href ='http://localhost:3000/ulubione/movieFav/<%=lista[i].movieId%>' ><img class="ulubione_img" src="../ulubione_obraz/not_favorite.png"/></a>
+                            <%} else {%>
+                            <a href ='http://localhost:3000/ulubione/movieFav/<%=lista[i].movieId%>' ><img class="ulubione_img" src="../ulubione_obraz/favorite.png"/></a>
+                            <%}%>
+                        </button>
                     </div>
                     <div class="zawartosc_opis" href ='http://localhost:3000/showMovie/<%=lista[i].movieId%>'>
                         <p class="opis_tresc"><%=lista[i].opis%></p>

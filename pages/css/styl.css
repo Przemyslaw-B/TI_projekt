@@ -105,6 +105,28 @@ html{
     text-decoration: none;
 }
 
+.tytul_change{
+    font: 2rem "Times New Roman", serif;
+    margin-top: 1rem;
+    margin-left: 10%;
+    color: white;
+    text-decoration: none;
+}
+
+.nowy_tytul{
+    margin-left: 15%;
+}
+
+#ok_zmiana_tytulu{
+    color: #6c757d;
+    margin-left: 7rem;
+    margin-top: 1rem;
+    background: #2b3035;
+    text-align: center;
+    width: 5rem;
+    height: 2rem;
+}
+
 .opis{
     display: block;
     margin-top: 1rem;
@@ -426,6 +448,30 @@ button wyloguj{
     margin-top: 10rem;
 }
 
+#kliknij_aby_dodac{
+    margin-left: 8rem;
+}
+
+#nowe_zdjecie{
+
+    max-height: 21rem;
+    max-width: 15rem;
+    margin-left: 8rem;
+    style: none;
+    object-fit: fill;
+}
+
+#ok_zmiana_okladki{
+    margin-left: 13rem;
+    color: #6c757d;
+    margin-top: 2rem;
+    background: #2b3035;
+    text-align: center;
+    width: 5rem;
+    height: 2rem;
+}
+
+
 
 .okladka{
     width: 20rem;
@@ -479,7 +525,46 @@ button wyloguj{
     text-justify: inter-word;
     text-decoration: none;
     color: white;
+}
 
+.opis_change{
+    word-wrap: break-word;
+    text-align: justify;
+    text-justify: inter-word;
+    margin-left: 20%;
+    margin-top: 3rem;
+    width: 60%;
+}
+
+#dodaj_nowy_opis{
+    color: #6c757d;
+    background: #2b3035;
+    width: 60%;
+    height: 15rem;
+    margin-top: 3rem;
+    margin-left: 10%;
+    word-wrap: break-word;
+    text-align: justify;
+}
+
+#ok_zmiana_opisu{
+    color: #6c757d;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    background: #2b3035;
+    text-align: center;
+    width: 10rem;
+    height: 2rem;
+}
+
+#ok_zmiana_kin{
+    color: #6c757d;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    background: #2b3035;
+    text-align: center;
+    width: 10rem;
+    height: 2rem;
 }
 
 .zawartosc_tresc_naglowka{
@@ -514,6 +599,236 @@ button wyloguj{
     height: 25rem;
     margin-top: 2rem;
 }
+
+.ulubione_img{
+    width: 2rem;
+    height: 2rem;
+    object-fit: fill;
+}
+
+#button_fav{
+    border: none;
+    appearance: none;
+    margin-right: 4rem;
+    margin-top: 1.5rem;
+    background: inherit;
+    width: 2rem;
+    height: 2rem;
+    float: right;
+    object-fit: fill;
+}
+
+.dodawanie_rezysera li{
+    display: inline-block;
+}
+
+.dodawanie_rezysera .rezyser_tyt{
+    font-size: 1.5rem;
+}
+
+.rezyser_tyt{
+    color: wheat;
+    font-weight: bold;
+}
+
+.rezyser_wypisany{
+    color: white;
+    margin-left: 1rem;
+}
+
+.rezyser_box{
+    margin-right: 2rem;
+    margin-top: 2rem;
+    float: right;
+}
+
+
+
+.potwierdz_rezyser{
+    margin-right: 2rem;
+    margin-top: 2rem;
+    float: right;
+}
+
+#pole_nowy_rezyser{
+    background: #2b3035;
+    color: white;
+}
+
+#ok_zmien_rezysera{
+    background: #2b3035;
+    color: #6c757d;
+}
+
+
+
+.opcja_wyswietl{
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.opcja_wyswietl p{
+    color: wheat;
+}
+
+.wypisz_kino{
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.wypisz_kino p{
+    color: wheat;
+    margin-bottom: 1rem;
+}
+
+.wypisz_dni_tygodnia{
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.dodaj_godzine_box{
+    display: inline-block;
+    list-style: none;
+    float: right;
+    margin-right: 2rem;
+    margin-top: 0.5rem;
+}
+
+.dodaj_nowa_godzine{
+    display: inline-block;
+    list-style: none;
+    float: right;
+    margin-right: 2rem;
+    margin-top: 0.5rem;
+    background: #2b3035;
+}
+
+.wypisany_dzien_tygodnia{
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    display: inline-block;
+    list-style: none;
+    color: wheat;
+    font-weight: bold;
+}
+
+.dzien_tygodnia{
+    display: inline-block;
+    list-style: none;
+    color: white;
+}
+
+.wypisana_godzina{
+    display: inline-block;
+    list-style: none;
+    color: white;
+}
+
+#ok_dodaj_godzine_box{
+    color: #6c757d;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    background: #2b3035;
+    text-align: center;
+    width: 10rem;
+    height: 2rem;
+}
+
+#ok_dodaj_godzine{
+    display: inline-block;
+}
+
+.dodaj_nowa_godzine{
+    background: #2b3035;
+    color: white;
+}
+
+#dodaj_nowa_godzine_0{
+    background: #2b3035;
+    color: white;
+}
+#dodaj_nowa_godzine_1{
+    background: #2b3035;
+    color: white;
+}
+#dodaj_nowa_godzine_2{
+    background: #2b3035;
+    color: white;
+}
+#dodaj_nowa_godzine_3{
+    background: #2b3035;
+    color: white;
+}
+#dodaj_nowa_godzine_4{
+    background: #2b3035;
+    color: white;
+}
+#dodaj_nowa_godzine_5{
+    background: #2b3035;
+    color: white;
+}
+#dodaj_nowa_godzine_6{
+    background: #2b3035;
+    color: white;
+}
+
+#ok_dodaj_godzine_box_0{
+    background: #2b3035;
+    color: #6c757d;
+}
+#ok_dodaj_godzine_box_1{
+    background: #2b3035;
+    color: #6c757d;
+}
+#ok_dodaj_godzine_box_2{
+    background: #2b3035;
+    color: #6c757d;
+}
+#ok_dodaj_godzine_box_3{
+    background: #2b3035;
+    color: #6c757d;
+}
+#ok_dodaj_godzine_box_4{
+    background: #2b3035;
+    color: #6c757d;
+}
+#ok_dodaj_godzine_box_5{
+    background: #2b3035;
+    color: #6c757d;
+}
+#ok_dodaj_godzine_box_6{
+    background: #2b3035;
+    color: #6c757d;
+}
+
+#dodaj_aktora{
+    background: #2b3035;
+    margin-top: 1rem;
+    color: white;
+    width: 12rem;
+    height: 1.5rem;
+}
+
+#ok_dodaj_aktora{
+    color: #6c757d;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    background: #2b3035;
+    text-align: center;
+    width: 10rem;
+    height: 2rem;
+}
+
+.dodana_godzina{
+    color: white;
+    text-decoration: none;
+    margin-left: 1rem;
+}
+
+
+
+
+
 
 
 

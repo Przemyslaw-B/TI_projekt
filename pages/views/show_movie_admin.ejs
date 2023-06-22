@@ -18,6 +18,7 @@
             <div class="dropdown">
                 <button class="dropbtn">Panel Administratora</button>
                 <div class="dropdown-content">
+                    <a href='http://localhost:3000/wszystkieFilmy'>Baza filmów</a>
                     <a href="http://localhost:3000/dodajKino">Dodaj kino</a>
                     <a href="http://localhost:3000/dodajFilm">Dodaj film</a>
                 </div>
@@ -28,41 +29,133 @@
 
     <div class="srodek">
         <ul class="tresc">
+            <li class="opcja_wyswietl"><p>Tytuł: </p></li>
+            <% let filmId = lista[0].movieId %>
             <li>
                 <ul class="film_box">
+
                     <li class="tytul_change"><%=lista[0].tytul%></li>
+                    <li class="nowy_tytul"><input placeholder="Nowy tytuł" type ="text" id="dodaj_tytul" name="T"></li>
+                    <li class="potwierdz"><input type="submit" id="ok_zmiana_tytulu" value="zatwierdź"></li>
                 </ul>
             </li>
 
+            <li class="opcja_wyswietl"><p>Okładka: </p></li>
             <li>
                 <ul class="film_box">
                     <li><img class="zdjecie" src="../plakat/<%=lista[0].plakat%>"></li>
                     <li id = "dodaj_plik">
-                        <div id = "dodawanie_pliku">
-                            <p><input type="file"  accept="image/*" name="image" id="file"  onchange="loadFile(event)" style="display: none;"></p>
-                            <p><label for="file" style="cursor: pointer;">Kliknij tutaj aby dodać nową okładkę.</label></p>
-                        </div>
-
+                        <ul class="opcje_zmiany_okladki">
+                            <form method="POST" accept="image/*" action="upload" enctype="multipart/form-data">
+                            <li>
+                                <div id = "dodawanie_pliku">
+                                <p><input type="file"  accept="image/*" name="image" id="file"  onchange="loadFile(event)" style="display: none;"></p>
+                                <p id="kliknij_aby_dodac"><label for="file" style="cursor: pointer;">Kliknij tutaj aby dodać nową okładkę.</label></p>
+                                </div>
+                            </li>
+                            <li class="potwierdz"><input type="submit" id="ok_zmiana_okladki" value="zatwierdź"></li>
+                            </form>
+                        </ul>
                         <script>
                             var loadFile = function(event) {
-                                var image = document.getElementById('output');
-                                image.src = URL.createObjectURL(event.target.files[0]);
+                                var newImage = document.getElementById('nowe_zdjecie');
+                                newImage.src = URL.createObjectURL(event.target.files[0]);
                             };
                         </script>
                     </li>
+                    <li><p><img id="nowe_zdjecie" width="200"></p></li>
                 </ul>
             </li>
 
-            <li>
-                <ul class="film_box">
-                    <li class="opis_change"><p id="opis_tresc"><%=lista[0].opis%></p></li>
-                </ul>
-            </li>
+            <li class="opcja_wyswietl"><p>Opis:</p></li>
+            <li class="opis_change"><p id="opis_tresc"><%=lista[0].opis%></p></li>
+            <li class="nowy_opis"><textarea placeholder="Nowy opis" type ="text" id="dodaj_nowy_opis" name="O"></textarea></li>
+            <li class="potwierdz"><input type="submit" id="ok_zmiana_opisu" value="zatwierdź"></li>
+
+
+            <li class="opcja_wyswietl"><p>Kina grające film:</p></li>
+                <% for(let k=0; k<allCinemaAmount; k++){ %>
+                <% let flag=0;%>
+                    <% for(let l=0; l<lista[0].cinemaAmount; l++){ %>
+                        <% if(allCinemaNames[k] === lista[0].cinemaList[l]){ %>
+                            <li><input type="checkbox" id="horns_<%=k%>" name="horns" value="<%=allCinemaId[k]%>" checked><%=allCinemaNames[k]%></li>
+                            <%flag=1;%>
+                        <%}%>
+                    <%}%>
+                    <% if(flag === 0){%>
+                        <li><input type="checkbox" id="horns_<%=k%>" name="horns" value="<%=allCinemaId[k]%>" unchecked><%=allCinemaNames[k]%></li>
+                    <%}%>
+                <%}%>
+            <li class="potwierdz"><input type="submit" id="ok_zmiana_kin" value="zatwierdź"></li>
+
+            <ul class="dodawanie_rezysera">
+            <li class="rezyser">
+                <p class="rezyser_tyt">Reżyser: </p></li>
+            <li class="rezyser_wypisany"><p><%=rezyser%></p></li>
+            <li class="potwierdz_rezyser"><input type="submit" id="ok_zmien_rezysera" value="zatwierdź"></li>
+            <li class="rezyser_box"><input placeholder="Dodaj nowego reżysera" type ="text" id="pole_nowy_rezyser" name="L"></li>
+            </ul>
+
+            <li class="opcja_wyswietl"><p>Obsada: </p></li>
+            <% if(obsada.length > 0){ %>
+                <% for(let osoba=0; osoba<obsada.length; osoba++){ %>
+                    <li class="obsaada_osoby"><input type="checkbox" id="horns_actor_<%=osoba%>" name="horns_actor" value="<%=obsada[osoba].actorId%>" checked> <%=obsada[osoba].imie%> <%=obsada[osoba].nazwisko%></li>
+                <%}%>
+            <%} else{%>
+                <li class="obsaada_osoby"><p>Nie dodano żadnych aktorów. </p></li>
+            <%}%>
+            <li class="uzytkownik"><input placeholder="Dodaj aktora" type ="text" id="dodaj_aktora" name="L"></li>
+            <li class="potwierdz"><input type="submit" id="ok_dodaj_aktora" value="zatwierdź"></li>
+
+
+
+            <li class="opcja_wyswietl"><p>Repertuar:</p></li>
+            <% for(let i=0; i<lista[0].cinemaAmount; i++){ %>
+                <li class="wypisz_kino"><p><%=lista[0].cinemaList[i]%></p></li>
+                <% for(let dzien=0; dzien<7; dzien++){ %>
+                <%let wybranyDzien=-1;%>
+                    <ul class="wypisz_dni_tygodnia">
+                            <% if(dzien === 0){ %>
+                                <li class="wypisany_dzien_tygodnia">Poniedziałek:</li>
+                                <%wybranyDzien=0;%>
+                            <%} else if(dzien === 1){ %>
+                                <li class="wypisany_dzien_tygodnia">Wtorek:</li>
+                                <%wybranyDzien=1;%>
+                            <%} else if(dzien === 2){ %>
+                                <li class="wypisany_dzien_tygodnia">Środa:</li>
+                                <%wybranyDzien=2;%>
+                            <%} else if(dzien === 3){ %>
+                                <li class="wypisany_dzien_tygodnia">Czwartek:</li>
+                                <%wybranyDzien=3;%>
+                            <%} else if(dzien === 4){ %>
+                                <li class="wypisany_dzien_tygodnia">Piątek:</li>
+                                <%wybranyDzien=4;%>
+                            <%} else if(dzien === 5){ %>
+                                <li class="wypisany_dzien_tygodnia">Sobota:</li>
+                                <%wybranyDzien=5;%>
+                            <%} else if(dzien === 6){ %>
+                                <li class="wypisany_dzien_tygodnia">Niedziela:</li>
+                                <%wybranyDzien=6;%>
+                            <%}%>
+                        <% if(kinoGranie[i].czasGrania[dzien].dniGodziny[wybranyDzien].godzinyIlosc > 0){ %>
+                            <% for(let godzina=0; godzina<kinoGranie[i].czasGrania[dzien].dniGodziny[wybranyDzien].godziny.length; godzina++){ %>
+                            <li class="dzien_tygodnia"><a href="#" class="dodana_godzina"><%=kinoGranie[i].czasGrania[dzien].dniGodziny[wybranyDzien].godziny[godzina].godzina%>:<%=kinoGranie[i].czasGrania[dzien].dniGodziny[wybranyDzien].godziny[godzina].minuta%></a></li>
+                            <%}%>
+                        <%} else {%>
+                            <li class="dzien_tygodnia"><p>Nie dodano żadnych godzin</p></li>
+                        <%}%>
+
+                        <li class="dodaj_nowa_godzine"><input placeholder="Dodaj nową godzinę" type ="text" id="dodaj_nowa_godzine_<%=i%>_<%=wybranyDzien%>" name="<%=lista[0].cinemaList[i]%>" style="background: #2b3035; color: white;"></li>
+                    </ul>
+                <%}%>
+            <%}%>
 
 
 
         </ul>
+        <input type="submit" id="ok_dodaj_godzine_box" value="zatwierdź"></li>
     </div>
+
 
 
 </div>

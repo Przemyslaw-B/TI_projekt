@@ -3,12 +3,21 @@ function logowanie(){
 
     var user = '{{request.user}}';
 
-    var amount = async function getAmount(){
-        var il = await getMovieAmount(db);
-        return il;
-        let file = document.getElementById('output'); //????
+    function getCookie(cname) {
+        let name = cname + "=";
+        let decodedCookie = decodeURIComponent(document.cookie);
+        let ca = decodedCookie.split(';');
+        for(let i = 0; i <ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
     }
-
 
     const element_loguj=document.getElementById('loguj');
     if(element_loguj){
@@ -88,8 +97,11 @@ function logowanie(){
     const element_dodaj_film=document.getElementById('ok_film');
     if(element_dodaj_film){
         element_dodaj_film.addEventListener('click', function(event) {
-            //let plik = document.getElementById('output');
-            //plik.src = URL.createObjectURL(event.target.files[0]);
+            let sciezka = "";
+            let plik = document.getElementById('file');
+            if(plik.files[0]) {
+                sciezka = plik.files[0].name;
+            }
             let nazwaFilmu=document.getElementById('dodaj_tytul').value;
             let rokProdukcji=document.getElementById('dodaj_rok').value;
             let rezyser=document.getElementById('dodaj_rezyser').value;
@@ -104,6 +116,7 @@ function logowanie(){
             params.paramRezyser = rezyser;
             params.paramOpis = opis;
             params.paramKina = kina;
+            params.paramSciezka = sciezka;
 
             http.send(JSON.stringify(params));
             //window.location="http://localhost:3000/";
@@ -111,50 +124,184 @@ function logowanie(){
         });
     }
 
-    function getMovieAmount(){
-        var amount=3;
-        let cookieName = "userData";
-        //amount=document.cookie.get
-        return amount;
-    }
-
-    const getCookie = (name) => {
-        return document.cookie.split("; ").reduce((r, v) => {
-            res.cookies.userData;
-            const parts = v.split("=");
-            return parts[0] === name ? decodeURIComponent(parts[1]) : r;
-        }, "");
-    };
-
-    //POST TEST
-    const element_test_post_file=document.getElementById('ok_tescik');
-    if(element_test_post_file){
-        element_test_post_file.addEventListener('click', function(event) {
-            //let plik = document.getElementById('output');
-           // plik.src = URL.createObjectURL(event.target.files[0]);
-            //let plikUrl = plik.src;
-
-            //let image = document.getElementById('file');
-            //image.src = URL.createObjectURL(event.target.files[0]);
+    const aktualizuj_tytul=document.getElementById('ok_zmiana_tytulu');
+    if(aktualizuj_tytul){
+        aktualizuj_tytul.addEventListener('click', function(event) {
+            let nowyTytul = document.getElementById('dodaj_tytul').value;
+            let url = window.location.href;
+            let text = url.split("/");
+            let filmId = text[text.length-1];
 
             const http = new XMLHttpRequest()
-            http.open("POST", "http://localhost:3000/test");
-            //http.setRequestHeader('Content-type', 'multipart/form-data')
-            const formData  = new FormData();
+            http.open("POST", "http://localhost:3000/nowyTytul");
+            http.setRequestHeader('Content-type', 'application/json')
+            var params = new Object();
 
-            for(const name in data) {
-                formData.append(name, data[name]);
-            }
+            params.paramNowyTytul = nowyTytul;
+            params.paramMovieId = filmId;
 
-            //var params = new Object();
-            //params.paramPlik = image.src;
-           // params.paramPlikURL = plikUrl;
+            http.send(JSON.stringify(params));
+            //window.location=`http://localhost:3000/showMovie/${movieId}`;
+            http.onload = () => console.log(http.responseText);
+            window.location.reload();
 
-
-            //http.send(JSON.stringify(params));
-            //http.onload = () => console.log(http.responseText);
         });
     }
+
+    const aktualizuj_okladke=document.getElementById('ok_zmiana_okladki');
+    if(aktualizuj_okladke){
+        aktualizuj_okladke.addEventListener('click', function(event) {
+            let sciezka = "";
+            let url = window.location.href;
+            let text = url.split("/");
+            let filmId = text[text.length-1];
+            let plik = document.getElementById('file');
+            if(plik.files[0]) {
+                sciezka = plik.files[0].name;
+            }
+            const http = new XMLHttpRequest()
+            http.open("POST", "http://localhost:3000/nowyPlakat");
+            http.setRequestHeader('Content-type', 'application/json')
+            var params = new Object();
+            params.paramMovieId = filmId;
+            params.paramSciezka = sciezka;
+            http.send(JSON.stringify(params));
+            //window.location="http://localhost:3000/";
+            http.onload = () => console.log(http.responseText);
+            window.location.reload();
+        });
+    }
+
+    const aktualizuj_opis=document.getElementById('ok_zmiana_opisu');
+    if(aktualizuj_opis){
+        aktualizuj_opis.addEventListener('click', function(event) {
+            let url = window.location.href;
+            let text = url.split("/");
+            let filmId = text[text.length-1];
+            let nowyOpis = document.getElementById('dodaj_nowy_opis').value;
+
+            const http = new XMLHttpRequest()
+            http.open("POST", "http://localhost:3000/nowyOpis");
+            http.setRequestHeader('Content-type', 'application/json');
+            var params = new Object();
+            params.paramMovieId = filmId;
+            params.paramNowyOpis = nowyOpis;
+            http.send(JSON.stringify(params));
+            //window.location="http://localhost:3000/";
+            http.onload = () => console.log(http.responseText);
+            window.location.reload();
+        });
+    }
+
+    const aktualizuj_kina=document.getElementById('ok_zmiana_kin');
+    if(aktualizuj_kina){
+        aktualizuj_kina.addEventListener('click', function(event) {
+            let url = window.location.href;
+            let text = url.split("/");
+            let filmId = text[text.length-1];
+            let allCinemaAmount = getCookie("allCinemaAmount");
+            let cinemaCheckBox=[];
+            //cinemaCheckBox.push({cinemaId: allCinemaAmount, cinemaCheckBox: allCinemaAmount});
+            if(allCinemaAmount !== ""){
+                for(let counter=0; counter<parseInt(allCinemaAmount); counter++){
+                    let value = document.getElementById(`horns_${counter}`).checked;
+                    let cinemaId= document.getElementById(`horns_${counter}`).value;
+                    cinemaCheckBox.push({cinemaId: cinemaId, cinemaCheckBox: value});
+                    //cinemaCheckBox.push({cinemaId: cinemaId, cinemaCheckBox: cinemaId});
+                }
+            }
+
+            const http = new XMLHttpRequest()
+            http.open("POST", "http://localhost:3000/aktualizacjaKin");
+            http.setRequestHeader('Content-type', 'application/json');
+            var params = new Object();
+            params.paramMovieId = filmId;
+            params.paramCheckBox = cinemaCheckBox;
+            http.send(JSON.stringify(params));
+            //window.location="http://localhost:3000/";
+            http.onload = () => console.log(http.responseText);
+            window.location.reload();
+        });
+    }
+
+    const aktualizuj_aktora=document.getElementById('ok_dodaj_aktora');
+    if(aktualizuj_aktora){
+        aktualizuj_aktora.addEventListener('click', function(event) {
+            let url = window.location.href;
+            let text = url.split("/");
+            let filmId = text[text.length-1];
+            let movieActorsAmount = getCookie("actorsMovieAmount");
+            let aktor = document.getElementById('dodaj_aktora').value;
+            let splitAktor = aktor.split(" ");
+            let nowyAktor = []
+            let checkBoxValue;
+            if(aktor !== ""){
+                if(splitAktor.length===2){
+                    nowyAktor.push({imie: splitAktor[0], nazwisko: splitAktor[1]});
+                }
+            }
+            let usunAktorow =[];
+            if(parseInt(movieActorsAmount) > 0){
+                for(let counter=0; counter<parseInt(movieActorsAmount); counter++){
+                    let value = document.getElementById(`horns_actor_${counter}`).checked;
+                    checkBoxValue = value;
+                    let actorId= document.getElementById(`horns_actor_${counter}`).value;
+                    if(value === false){
+                        usunAktorow.push({actorId: actorId});
+                    }
+                }
+            }
+            const http = new XMLHttpRequest()
+            http.open("POST", "http://localhost:3000/aktualizacjaObsady");
+            http.setRequestHeader('Content-type', 'application/json');
+            var params = new Object();
+            params.paramMovieId= filmId;
+            params.paramNowyAktor = nowyAktor;
+            params.paramUsunAktorow = usunAktorow;
+            params.paramBoxValue = checkBoxValue;
+            http.send(JSON.stringify(params));
+            //window.location="http://localhost:3000/";
+            http.onload = () => console.log(http.responseText);
+            window.location.reload();
+        });
+    }
+
+    const aktualizuj_godzine=document.getElementById('ok_dodaj_godzine_box');
+    if(aktualizuj_godzine){
+        aktualizuj_godzine.addEventListener('click', function(event) {
+            let url = window.location.href;
+            let text = url.split("/");
+            let filmId = text[text.length-1];
+            let cinemaAmount = parseInt(getCookie("cinemaAmount"));
+            let value  = -1;
+            let godzina=[];
+            let dzien= -1;
+            let name = -1;
+            let czas;
+                for(let counter=0; counter<cinemaAmount; counter++){
+                    for(let counterDay=0; counterDay<7; counterDay++){
+                        value = document.getElementById(`dodaj_nowa_godzine_${counter}_${counterDay}`).value;
+                        czas = value.split(":");
+                        name = document.getElementById(`dodaj_nowa_godzine_${counter}_${counterDay}`).name;
+                        dzien=counterDay;
+                        if(czas.length === 2){
+                            godzina.push({cinemaName: name, dzien: dzien, godzina: parseInt(czas[0]), minuta: parseInt(czas[1])});
+                        }
+                    }
+                }
+            const http = new XMLHttpRequest()
+            http.open("POST", "http://localhost:3000/dodajGodzine");
+            http.setRequestHeader('Content-type', 'application/json');
+            var params = new Object();
+            params.paramMovieId= filmId;
+            params.paramGodzina = godzina;
+            http.send(JSON.stringify(params));
+            //window.location="http://localhost:3000/";
+            http.onload = () => console.log(http.responseText);
+            window.location.reload();
+        });
+    }
+
 
 
 

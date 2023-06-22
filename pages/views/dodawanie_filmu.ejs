@@ -18,6 +18,7 @@
             <div class="dropdown">
                 <button class="dropbtn">Panel Administratora</button>
                 <div class="dropdown-content">
+                    <a href='http://localhost:3000/wszystkieFilmy'>Baza filmów</a>
                     <a href="http://localhost:3000/dodajKino">Dodaj kino</a>
                     <a href="http://localhost:3000/dodajFilm">Dodaj film</a>
                 </div>
@@ -26,10 +27,6 @@
         </ul>
     </div>
     <div class="srodek">
-
-
-
-        <form>
             <ul id="panel">
                 <li id="formularz_zdjecie">
                 <div id="div_IMG">
@@ -45,6 +42,7 @@
                 <li class="mail"><input placeholder="Opis" type ="text" id="dodaj_opis" name="O"></li>
                 <li class="mail"><input placeholder="Kina" type ="text" id="dodaj_kina" name="K"></li>
                 <li id = "informacja_okladka">Proszę dodać okładkę.</li>
+                    <form method="POST" accept="image/*" action="upload" enctype="multipart/form-data">
                 <li id = "dodaj_plik">
                     <div id = "dodawanie_pliku">
                         <p><input type="file"  accept="image/*" name="image" id="file"  onchange="loadFile(event)" style="display: none;"></p>
@@ -56,14 +54,16 @@
                             image.src = URL.createObjectURL(event.target.files[0]);
                         };
                     </script>
-                <li class="potwierdz"><input type="button" id="ok_film" value="potwierdź"></li>
+                <li class="potwierdz"><input type="submit" id="ok_film" value="potwierdź"></li>
+                    </form>
 
 
 
             </ul>
             </li>
             </ul>
-        </form>
+
+
 
 
     </div>
