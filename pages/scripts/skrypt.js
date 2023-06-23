@@ -91,6 +91,7 @@ function logowanie(){
             http.send(JSON.stringify(params));
             //window.location="http://localhost:3000/";
             http.onload = () => console.log(http.responseText);
+            window.location.reload();
         });
     }
 
@@ -106,7 +107,7 @@ function logowanie(){
             let rokProdukcji=document.getElementById('dodaj_rok').value;
             let rezyser=document.getElementById('dodaj_rezyser').value;
             let opis=document.getElementById('dodaj_opis').value;
-            let kina = document.getElementById('dodaj_kina').value;
+            //let kina = document.getElementById('dodaj_kina').value;
             const http = new XMLHttpRequest()
             http.open("POST", "http://localhost:3000/dodajFilm");
             http.setRequestHeader('Content-type', 'application/json')
@@ -115,7 +116,7 @@ function logowanie(){
             params.paramRokProdukcji = rokProdukcji;
             params.paramRezyser = rezyser;
             params.paramOpis = opis;
-            params.paramKina = kina;
+            //params.paramKina = kina;
             params.paramSciezka = sciezka;
 
             http.send(JSON.stringify(params));
@@ -278,17 +279,17 @@ function logowanie(){
             let dzien= -1;
             let name = -1;
             let czas;
-                for(let counter=0; counter<cinemaAmount; counter++){
-                    for(let counterDay=0; counterDay<7; counterDay++){
-                        value = document.getElementById(`dodaj_nowa_godzine_${counter}_${counterDay}`).value;
-                        czas = value.split(":");
-                        name = document.getElementById(`dodaj_nowa_godzine_${counter}_${counterDay}`).name;
-                        dzien=counterDay;
-                        if(czas.length === 2){
-                            godzina.push({cinemaName: name, dzien: dzien, godzina: parseInt(czas[0]), minuta: parseInt(czas[1])});
-                        }
+            for(let counter=0; counter<cinemaAmount; counter++){
+                for(let counterDay=0; counterDay<7; counterDay++){
+                    value = document.getElementById(`dodaj_nowa_godzine_${counter}_${counterDay}`).value;
+                    czas = value.split(":");
+                    name = document.getElementById(`dodaj_nowa_godzine_${counter}_${counterDay}`).name;
+                    dzien=counterDay;
+                    if(czas.length === 2){
+                        godzina.push({cinemaName: name, dzien: dzien, godzina: parseInt(czas[0]), minuta: parseInt(czas[1])});
                     }
                 }
+            }
             const http = new XMLHttpRequest()
             http.open("POST", "http://localhost:3000/dodajGodzine");
             http.setRequestHeader('Content-type', 'application/json');
@@ -297,6 +298,42 @@ function logowanie(){
             params.paramGodzina = godzina;
             http.send(JSON.stringify(params));
             //window.location="http://localhost:3000/";
+            http.onload = () => console.log(http.responseText);
+            window.location.reload();
+        });
+    }
+
+    const dodaj_like=document.getElementById('button_like');
+    if(dodaj_like){
+        dodaj_like.addEventListener('click', function(event) {
+            let url = window.location.href;
+            let text = url.split("/");
+            let filmId = text[text.length-1];
+
+            const http = new XMLHttpRequest()
+            http.open("POST", "http://localhost:3000/like");
+            http.setRequestHeader('Content-type', 'application/json');
+            var params = new Object();
+            params.paramMovieId= filmId;
+            http.send(JSON.stringify(params));
+            http.onload = () => console.log(http.responseText);
+            window.location.reload();
+        });
+    }
+
+    const dodaj_dislike=document.getElementById('button_dislike');
+    if(dodaj_dislike){
+        dodaj_dislike.addEventListener('click', function(event) {
+            let url = window.location.href;
+            let text = url.split("/");
+            let filmId = text[text.length-1];
+
+            const http = new XMLHttpRequest()
+            http.open("POST", "http://localhost:3000/dislike");
+            http.setRequestHeader('Content-type', 'application/json');
+            var params = new Object();
+            params.paramMovieId= filmId;
+            http.send(JSON.stringify(params));
             http.onload = () => console.log(http.responseText);
             window.location.reload();
         });

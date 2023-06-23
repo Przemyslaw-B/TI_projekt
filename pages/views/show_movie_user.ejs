@@ -18,7 +18,7 @@
             <div class="dropdown">
                 <button class="dropbtn">Profil</button>
                 <div class="dropdown-content">
-                    <a href="#">Edytuj profil</a>
+                    <a href='http://localhost:3000/wszystkieFilmy'>Baza filmów</a>
                     <a href='http://localhost:3000/ulubione'>Ulubione</a>
                 </div>
             </div>
@@ -37,7 +37,29 @@
             <div class = "zawartosc_film" >
                 <div class="zawartosc_tytul">
                     <a class="tytul"> <%=lista[0].tytul%></a>
+                    <button id="button_like">
+                        <% if(likeStatus === 1){ %>
+                            <a class="like_numbers"><img class="ulubione_img" src="../ulubione_obraz/like_app.png"/>(<%=likesAmount%>)</a>
+                        <%} else { %>
+                            <a class="like_numbers"><img class="ulubione_img" src="../ulubione_obraz/like.png"/>(<%=likesAmount%>)</a>
+                        <%}%>
+                    </button>
+                    <button id="button_dislike">
+                        <% if(likeStatus === 0){ %>
+                            <a class="like_numbers"><img class="ulubione_img" src="../ulubione_obraz/dislike_app.png"/>(<%=dislikesAmount%>)</a>
+                        <%} else { %>
+                            <a class="like_numbers"><img class="ulubione_img" src="../ulubione_obraz/dislike.png"/>(<%=dislikesAmount%>)</a>
+                        <%}%>
+                    </button>
+                        <button id="button_fav">
+                            <% if(checkUlubiony === 1) {%>
+                            <a href ='http://localhost:3000/movieFav/details/<%=lista[0].movieId%>' ><img class="ulubione_img" src="../ulubione_obraz/favorite.png"/></a>
+                            <%} else {%>
+                            <a href ='http://localhost:3000/movieFav/details/<%=lista[0].movieId%>' ><img class="ulubione_img" src="../ulubione_obraz/not_favorite.png"/></a>
+                            <%}%>
+                        </button>
                 </div>
+
                 <div class="zawartosc_opis" href ='http://localhost:3000/showMovie/<%=lista[0].movieId%>'>
                     <p class="opis_tresc"><%=lista[0].opis%></p>
                 </div>
@@ -61,6 +83,57 @@
             </div>
             </div>
         </li>
+
+
+        <li class="opcja_wyswietl"><p>Obsada: </p></li>
+        <li class="rezyser"><p class="rezyser_tyt">Reżyser: <%=rezyser%></p></li>
+        <li class="rezyser"><p class="rezyser_tyt">Aktorzy:</p></li>
+        <% for(let count=0; count<actorsAmount; count++){ %>
+            <li class="rezyser"><p class="wypisz_aktor"><%=obsada[count].imie%> <%=obsada[count].nazwisko%></p></li>
+        <%}%>
+        <li class="opcja_wyswietl"><p>Repertuar:</p></li>
+        <% for(let i=0; i<lista[0].cinemaAmount; i++){ %>
+        <li class="wypisz_kino"><p><%=lista[0].cinemaList[i]%></p></li>
+        <% for(let dzien=0; dzien<7; dzien++){ %>
+            <%let wybranyDzien=-1;%>
+            <ul class="wypisz_dni_tygodnia">
+                <% if(dzien === 0){ %>
+                <li class="wypisany_dzien_tygodnia">Poniedziałek:</li>
+                <%wybranyDzien=0;%>
+                <%} else if(dzien === 1){ %>
+                <li class="wypisany_dzien_tygodnia">Wtorek:</li>
+                <%wybranyDzien=1;%>
+                <%} else if(dzien === 2){ %>
+                <li class="wypisany_dzien_tygodnia">Środa:</li>
+                <%wybranyDzien=2;%>
+                <%} else if(dzien === 3){ %>
+                <li class="wypisany_dzien_tygodnia">Czwartek:</li>
+                <%wybranyDzien=3;%>
+                <%} else if(dzien === 4){ %>
+                <li class="wypisany_dzien_tygodnia">Piątek:</li>
+                <%wybranyDzien=4;%>
+                <%} else if(dzien === 5){ %>
+                <li class="wypisany_dzien_tygodnia">Sobota:</li>
+                <%wybranyDzien=5;%>
+                <%} else if(dzien === 6){ %>
+                <li class="wypisany_dzien_tygodnia">Niedziela:</li>
+                <%wybranyDzien=6;%>
+                <%}%>
+                <% if(kinaGodziny[i].dniGodziny[dzien].iloscGodzin > 0){ %>
+                    <% for(let godzina=0; godzina<kinaGodziny[i].dniGodziny[dzien].iloscGodzin; godzina++){ %>
+                        <% if(kinaGodziny[i].dniGodziny[dzien].godziny[godzina].minuta.toString().length === 1) {%>
+                        <li class="dzien_tygodnia"><a class="dodana_godzina"><%=kinaGodziny[i].dniGodziny[dzien].godziny[godzina].godzina%>:0<%=kinaGodziny[i].dniGodziny[dzien].godziny[godzina].minuta%></a></li>
+                        <%} else{%>
+                        <li class="dzien_tygodnia"><a  class="dodana_godzina"><%=kinaGodziny[i].dniGodziny[dzien].godziny[godzina].godzina%>:<%=kinaGodziny[i].dniGodziny[dzien].godziny[godzina].minuta%></a></li>
+                        <%}%>
+                    <%}%>
+                <%} else {%>
+                    <li class="dzien_tygodnia"><p>Nie dodano żadnych godzin</p></li>
+                <%}%>
+            </ul>
+        <%}%>
+        <%}%>
+
     </ul>
 </div>
 

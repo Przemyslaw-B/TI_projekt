@@ -420,7 +420,7 @@ button wyloguj{
 
 #div_IMG{
     margin-top: 5rem;
-    margin-left: 7rem;
+    margin-left: 6rem;
     width: 10rem;
     height: 15rem;
     object-fit: fill;
@@ -495,7 +495,7 @@ button wyloguj{
 .zawartosc_opis{
     width: 100%;
     height: 10rem;
-    margin-top: 1rem;
+    margin-top: 1.5rem;
     float: left;
 }
 
@@ -618,13 +618,80 @@ button wyloguj{
     object-fit: fill;
 }
 
+#button_like{
+    border: none;
+    appearance: none;
+    margin-top: 1rem;
+    background: inherit;
+    width: 2rem;
+    height: 2rem;
+    object-fit: fill;
+    float: left;
+    margin-left: 2rem;
+}
+
+#all_button_like{
+    border: none;
+    appearance: none;
+    margin-top: 1rem;
+    background: inherit;
+    width: 2rem;
+    height: 2rem;
+    object-fit: fill;
+    float: left;
+    margin-left: 2rem;
+}
+
+#button_dislike{
+    border: none;
+    appearance: none;
+    margin-top: 1rem;
+    background: inherit;
+    width: 2rem;
+    height: 2rem;
+    object-fit: fill;
+    float: left;
+    margin-left: 2rem;
+}
+
+#all_button_dislike{
+    border: none;
+    appearance: none;
+    margin-top: 1rem;
+    background: inherit;
+    width: 2rem;
+    height: 2rem;
+    object-fit: fill;
+    float: left;
+    margin-left: 2rem;
+}
+
+.like_numbers{
+    color: #6c757d;
+    text-decoration: none;
+}
+
 .dodawanie_rezysera li{
     display: inline-block;
+}
+
+.rezyser_show{
+
+}
+
+.show_rezyser_tyt{
+
+}
+
+.wypisz_aktor{
+    color: white;
+    margin-bottom: 0.5rem;
 }
 
 .dodawanie_rezysera .rezyser_tyt{
     font-size: 1.5rem;
 }
+
 
 .rezyser_tyt{
     color: wheat;

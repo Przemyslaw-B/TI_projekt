@@ -39,6 +39,30 @@
                 <div class = "zawartosc_film" >
                     <div class="zawartosc_tytul">
                         <a class="tytul" href ='http://localhost:3000/showMovie/<%=lista[i].movieId%>'> <%=lista[i].tytul%></a>
+
+                        <button id="button_like">
+                            <% for(let count=0; count < allLikesAmount; count++){ %>
+                                <% if(allLikes[count].movieId === lista[i].movieId){ %>
+                                    <% if(allLikes[count].likeStatus === 1){ %>
+                                    <a class="like_numbers" href='http://localhost:3000/like/<%=lista[i].movieId%>'><img class="ulubione_img" src="../ulubione_obraz/like_app.png"/>(<%=allLikes[count].likesAmount%>)</a>
+                                    <%} else { %>
+                                    <a class="like_numbers" href='http://localhost:3000/like/<%=lista[i].movieId%>'><img class="ulubione_img" src="../ulubione_obraz/like.png"/>(<%=allLikes[count].likesAmount%>)</a>
+                                    <%}%>
+                                <%}%>
+                            <%}%>
+                        </button>
+                        <button id="button_dislike">
+                            <% for(let count=0; count < allLikesAmount; count++){ %>
+                                <% if(allLikes[count].movieId === lista[i].movieId){ %>
+                                    <% if(allLikes[count].likeStatus === 0){ %>
+                                    <a class="like_numbers" href='http://localhost:3000/dislike/<%=lista[i].movieId%>'><img class="ulubione_img" src="../ulubione_obraz/dislike_app.png"/>(<%=allLikes[count].dislikesAmount%>)</a>
+                                    <%} else { %>
+                                    <a class="like_numbers" href='http://localhost:3000/dislike/<%=lista[i].movieId%>'><img class="ulubione_img" src="../ulubione_obraz/dislike.png"/>(<%=allLikes[count].dislikesAmount%>)</a>
+                                    <%}%>
+                                <%}%>
+                            <%}%>
+                        </button>
+
                             <button id="button_fav">
                                 <% if(lista[i].isFavorite === 0) {%>
                                     <a href ='http://localhost:3000/movieFav/<%=lista[i].movieId%>' ><img class="ulubione_img" src="../ulubione_obraz/not_favorite.png"/></a>

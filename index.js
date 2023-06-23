@@ -358,6 +358,51 @@ async function get_all_movieIDs(db){
     });
 }
 
+async function get_all_likes_list(db, userId){
+    let listaLike =[];
+    return new Promise((resolve, reject) => {
+        db.all('Select id_movie, like_value from likes where id_user=?;',[userId], (err, row) => {
+            row.forEach(function(row){
+                listaLike.push({movieId: row.id_movie, likeValue: row.like_value});
+            })
+            resolve(listaLike);
+            if (err) {
+                console.log('ERROR!', err);
+            }
+        });
+    });
+}
+
+async function get_movie_likes_count_list(db){
+    let listaLike =[];
+    return new Promise((resolve, reject) => {
+        db.all('Select id_movie, count(like_value) as ilosc from likes where like_value=1;', (err, row) => {
+            row.forEach(function(row){
+                listaLike.push({movieId: row.id_movie, likeCount: ilosc});
+            })
+            resolve(listaLike);
+            if (err) {
+                console.log('ERROR!', err);
+            }
+        });
+    });
+}
+
+async function get_movie_dislikes_count_list(db){
+    let listaLike =[];
+    return new Promise((resolve, reject) => {
+        db.all('Select id_movie, count(like_value) as ilosc from likes where like_value=0;', (err, row) => {
+            row.forEach(function(row){
+                listaLike.push({movieId: row.id_movie, likeCount: ilosc});
+            })
+            resolve(listaLike);
+            if (err) {
+                console.log('ERROR!', err);
+            }
+        });
+    });
+}
+
 async function get_all_cinemaIds(db){
     let listaId =[];
     return new Promise((resolve, reject) => {
@@ -419,8 +464,8 @@ async function create_favorite_movie_list(db, userId){
         path = await get_movie_plakat(db, movieIds[id]);
         cinemaAmount = await get_cinema_amount(db, movieIds[id]);
         movieId = movieIds[id];
-        cinemaList = await get_cinemaNames(db, movieIds[id]);
-        isFavorite=1;
+        let cinemaList = await get_cinemaNames(db, movieIds[id]);
+        let isFavorite=1;
         lista.push({tytul: name, opis: opis, plakat: path, cinemaAmount: cinemaAmount, movieId: movieId, cinemaList: cinemaList, isFavorite: 1});
         id++;
     }
@@ -510,6 +555,30 @@ async function create_all_movie_list_with_favorite(db,userId){
     return lista;
 }
 
+async function create_all_movie_like_list(db,userId){
+    let id = 0;
+    let lista = [];
+    let movieId = await get_all_movieIDs(db);
+    let likeList = await get_all_likes_list(db, userId);
+    let likeAmount = likeList.length;
+    let movieAmount = movieId.length;
+    let isLiked = 0;
+
+    while(id < movieAmount){
+        isLiked=0;
+        for(let i=0; i< likeAmount; i++){
+            if(likeList[i] === movieId[id]){
+                isLiked=1;
+            }
+        }
+        lista.push({tytul: name, opis: opis, plakat: path, cinemaAmount: cinemaAmount, movieId: movieId[id], cinemaList: cinemaList, isFavorite: isFavorite});
+        id++;
+    }
+    return lista;
+}
+
+
+
 async function create_favorite_only_movie_list(db, userId){
     let id = 0;
     let lista = [];
@@ -570,6 +639,14 @@ async function create_all_cinema_list(db){
 
 async function delete_session(db, sessionS){
     db.run('UPDATE users SET sesja=null where sesja=?;', [sessionS], (err) => {
+        if (err) {
+            console.log('ERROR!', err);
+        }
+    });
+}
+
+async function update_like_value(db, userId, movieId, value){
+    db.run('UPDATE likes SET like_value=? where id_user=? and id_movie=?;', [value, userId, movieId], (err) => {
         if (err) {
             console.log('ERROR!', err);
         }
@@ -657,6 +734,21 @@ async function get_movies_amount(db){
 async function check_isPlaying(db, movieId){
     return new Promise((resolve, reject) => {
         db.get('Select id_cinema from cinema_movie where id_movie=?;', [movieId], (err, row) => {
+            if(row){
+                resolve(1);
+            } else{
+                resolve(-1);
+            }
+            if (err) {
+                console.log('ERROR!', err);
+            }
+        });
+    });
+}
+
+async function check_is_favorite(db, userId, movieId){
+    return new Promise((resolve, reject) => {
+        db.get('Select user_id from users_favorite where user_id=? and movie_id=?;', [userId, movieId], (err, row) => {
             if(row){
                 resolve(1);
             } else{
@@ -921,6 +1013,36 @@ async function check_isFavorite(db, userId, movieId){
     });
 }
 
+async function check_like(db, userId, movieId){
+    return new Promise((resolve, reject) => {
+        db.get('Select like_value from likes where id_user=? and id_movie=?;', [userId, movieId], (err, row) => {
+            if(row){
+                resolve(row.like_value);
+            } else{
+                resolve(-1);
+            }
+            if (err) {
+                console.log('ERROR!', err);
+            }
+        });
+    });
+}
+
+async function get_likes_value_amount(db, movieId, value){
+    return new Promise((resolve, reject) => {
+        db.get('Select count(id_movie) as ilosc from likes where id_movie=? and like_value=?;', [movieId, value], (err, row) => {
+            if(row){
+                resolve(row.ilosc);
+            } else{
+                resolve(-1);
+            }
+            if (err) {
+                console.log('ERROR!', err);
+            }
+        });
+    });
+}
+
 async function add_isFavorite(db, userId, movieId){
     db.run('INSERT INTO users_favorite (user_id, movie_id) VALUES (?, ?);', [userId, movieId], (err) => {
         if (err) {
@@ -929,8 +1051,32 @@ async function add_isFavorite(db, userId, movieId){
     });
 }
 
+async function add_like_value(db, userId, movieId, value){
+    db.run('INSERT INTO likes (id_user, id_movie, like_value) VALUES (?, ?, ?);', [userId, movieId, value], (err) => {
+        if (err) {
+            console.log('ERROR!', err);
+        }
+    });
+}
+
 async function remove_isFavorite(db, userId, movieId){
     db.run('DELETE FROM users_favorite where user_id=? and movie_id=?;', [userId, movieId], (err) => {
+        if (err) {
+            console.log('ERROR!', err);
+        }
+    });
+}
+
+async function remove_one_playing_time(db, cinemaId, movieId, dzien, godzina, minuta){
+    db.run('DELETE FROM playing_time where id_cinema=? and id_movie=? and day=? and godzina=? and minuta=?;', [cinemaId, movieId, dzien, godzina, minuta], (err) => {
+        if (err) {
+            console.log('ERROR!', err);
+        }
+    });
+}
+
+async function remove_like(db, userId, movieId){
+    db.run('DELETE FROM likes where id_user=? and id_movie=?;', [userId, movieId], (err) => {
         if (err) {
             console.log('ERROR!', err);
         }
@@ -966,7 +1112,20 @@ async function remove_all_movie_playing_time_from_cinema(db, cinemaId, movieId){
 app.get('/mainPage', async (req, res) => {
     let amount = parseInt(req.cookies["movieAmount"]);
     let lista = await create_movie_list(db, amount);
-    res.render('views/index', {images: 'plakat', amount: amount, lista: lista});
+
+    let allLikes = [];
+    for(let count =0; count<lista.length; count++){
+        let id = lista[count].movieId;
+        let likesAmount = await get_likes_value_amount(db, id, 1);
+        let dislikesAmount = await get_likes_value_amount(db, id, 0);
+        let likeStatus = -1;
+        allLikes.push({movieId: id, likesAmount: likesAmount, dislikesAmount: dislikesAmount, likeStatus: likeStatus});
+
+    }
+    //movieId, likeValue
+    let allLikesAmount = allLikes.length;
+
+    res.render('views/index', {images: 'plakat', allLikes: allLikes, allLikesAmount: allLikesAmount, amount: amount, lista: lista});
 });
 
 app.get('/', (req, res) => {
@@ -983,7 +1142,20 @@ app.get('/login', async (req, res) => {
     if(rank === 0){
         let userId = await get_userId(db, sesja);
         let lista = await create_movie_list_with_favorite(db, userId, amount);
-        res.render('views/loggedin', {images: 'plakat', amount: amount, lista: lista});
+        let likeList = await get_all_likes_list(db, userId);
+        let allLikes = [];
+        for(let count =0; count<lista.length; count++){
+            let id = lista[count].movieId;
+            let likesAmount = await get_likes_value_amount(db, id, 1);
+            let dislikesAmount = await get_likes_value_amount(db, id, 0);
+            let likeStatus = await check_like(db, userId, id);
+            allLikes.push({movieId: id, likesAmount: likesAmount, dislikesAmount: dislikesAmount, likeStatus: likeStatus});
+
+        }
+        //movieId, likeValue
+        let likeListAmount = likeList.length;
+        let allLikesAmount = allLikes.length;
+        res.render('views/loggedin', {images: 'plakat',likeList: likeList, allLikes: allLikes, allLikesAmount: allLikesAmount, likeListAmount: likeListAmount, likeList: likeList, amount: amount, lista: lista});
     } else if(rank === 1){
         res.redirect("/loginAdmin");
     } else{
@@ -995,8 +1167,22 @@ app.get('/loginAdmin',async (req, res) => {
     let amount = parseInt(req.cookies["movieAmount"]);
     let lista = await create_movie_list(db, amount);
     let rank = await get_rank(db, req.session.id);
+
     if(rank === 1){
-        res.render('views/loggedin_admin', {images: 'plakat', amount: amount, lista: lista});
+
+        let allLikes = [];
+        for(let count =0; count<lista.length; count++){
+            let id = lista[count].movieId;
+            let likesAmount = await get_likes_value_amount(db, id, 1);
+            let dislikesAmount = await get_likes_value_amount(db, id, 0);
+            let likeStatus = -1;
+            allLikes.push({movieId: id, likesAmount: likesAmount, dislikesAmount: dislikesAmount, likeStatus: likeStatus});
+
+        }
+        //movieId, likeValue
+        let allLikesAmount = allLikes.length;
+
+        res.render('views/loggedin_admin', {images: 'plakat', allLikes: allLikes, allLikesAmount: allLikesAmount, amount: amount, lista: lista});
     } else if(rank === 0){
         res.redirect("/login");
     } else{
@@ -1087,7 +1273,7 @@ app.post('/dodajFilm', async (req, res) => {
     let rokProdukcji = req.body.paramRokProdukcji;
     let rezyser = req.body.paramRezyser;
     let opis = req.body.paramOpis;
-    let kina = req.body.paramKina;
+    //let kina = req.body.paramKina;
     let rank = await get_rank(db, req.session.id);
     let checkMovie = await check_nazwaFilmu(db, tytul);
     console.log("Dodaje Film");
@@ -1096,11 +1282,11 @@ app.post('/dodajFilm', async (req, res) => {
     console.log(rokProdukcji);
     console.log(rezyser);
     console.log(opis);
-    console.log(kina);
+    //console.log(kina);
     console.log(rank);
     console.log(checkMovie);
 
-    if(rank === 1 && checkMovie === 0 && tytul !== "" && rokProdukcji !== "" && rezyser !== "" && kina !== "" && opis !== ""){
+    if(rank === 1 && checkMovie === 0 && tytul !== "" && rokProdukcji !== "" && rezyser !== "" && opis !== ""){
         if(sciezka===""){
             sciezka ="default.jpg";
             await insert_movie(db, tytul, rokProdukcji, rezyser, opis, sciezka);
@@ -1108,17 +1294,6 @@ app.post('/dodajFilm', async (req, res) => {
             await insert_movie(db, tytul, rokProdukcji, rezyser, opis, sciezka);
         }
 
-        let arrayCinema = kina.split(";");
-        let j = 0;
-        while(j < arrayCinema.length){
-
-            let kinoId = await get_cinemaId(db, arrayCinema[j]);
-            let filmId = await get_movieId(db, tytul);
-            if(kinoId !== -1 && filmId !== -1){
-                await insert_cinema_movie(db, kinoId, filmId);
-            }
-            j++;
-        }
         return res.redirect("/");
     } else{
         return res.redirect("/dodajFilm");
@@ -1169,6 +1344,7 @@ app.get('/showMovie/:id', async (req, res) => {
     let id = req.params.id;
     let session = req.session.id;
     let rank = await get_rank(db, session);
+    let userId = await get_userId(db, session);
     let lista = await create_one_movie_list(db, id);
     let rezyser = await get_movie_rezyser(db, id);
     let obsada = await get_movie_actors(db, id);
@@ -1177,20 +1353,28 @@ app.get('/showMovie/:id', async (req, res) => {
     let dni_godziny=[];
     let kinoGranie=[];
     let actorsAmount = await count_actors_in_movie(db, id);
-    //TODO czasGrania dzieli wiersze na dni a nie na kina!
-    //TODO trzeba przerobić rozdzielanie godzin i dni do poszczególnych kin
+    let kinaGodziny = [];
+    let dniGodziny=[];
+    let checkUlubiony = await check_isFavorite(db, userId, id);
+    let likesAmount = await get_likes_value_amount(db, id, 1);
+    let dislikesAmount = await get_likes_value_amount(db, id, 0);
+    let checkLike = await check_like(db, userId, id);
+    console.log(`check like: ${checkLike}`);
     for(let j=0; j< iloscKin; j++){
         let kinoId = await get_cinemaId(db, lista[0].cinemaList[j]);
+        dniGodziny=[];
         for(let dzien=0; dzien<7; dzien++){
             let godziny = await get_playing_time(db, id, kinoId, dzien);
             // godziny {godzina, minuta}
             let godzinyIlosc = godziny.length;
+            dniGodziny.push({iloscGodzin: godzinyIlosc, dzien: dzien, godziny: godziny});
             dni_godziny.push({godziny: godziny, godzinyIlosc: godzinyIlosc});
 
             czasGrania.push({kinoId: kinoId, dzien: dzien, dniGodziny: dni_godziny});   //TO jest zbędne, po raz kolejny układa wiersze dniami???
         }
+        kinaGodziny.push({kinoId: kinoId, dniGodziny: dniGodziny});
         kinoGranie.push({kinoId: kinoId, czasGrania:czasGrania});
-        console.log(`id kina: ${kinoGranie[j].kinoId}, KinoGranie ${kinoGranie[j]}, czasGrania[1]: ${kinoGranie[j].czasGrania[1]}, dzień: ${kinoGranie[j].czasGrania[1].dzien}, godzinyIlość: ${kinoGranie[j].czasGrania[1].dniGodziny[1].godzinyIlosc}, pokaż godzinę: ${kinoGranie[j].czasGrania[1].dniGodziny[1].godziny[0].godzina}:${kinoGranie[j].czasGrania[1].dniGodziny[1].godziny[0].minuta}`);
+        //console.log(`id kina: ${kinaGodziny[j].kinoId}-${lista[0].cinemaList[j]}, dzień[0]: ${kinaGodziny[j].dniGodziny[0].dzien}, godzinyIlość: ${kinaGodziny[j].dniGodziny[0].iloscGodzin}, pokaż godzinę[0]: ${kinaGodziny[j].dniGodziny[0].godziny[0].godzina}:${kinaGodziny[j].dniGodziny[0].godziny[0].minuta}`);
     }
     if(rank === 1){
         let allCinemaId = await get_all_cinemaIds(db);
@@ -1201,11 +1385,11 @@ app.get('/showMovie/:id', async (req, res) => {
         res.cookie("allCinemaAmount", allCinemaAmount);
         res.cookie("cinemaAmount", lista[0].cinemaAmount);
         res.cookie("actorsMovieAmount", obsada.length);
-        res.render('views/show_movie_admin', {images: 'plakat', allCinemaAmount: allCinemaAmount, allCinemaId: allCinemaId, allCinemaNames: allCinemaNames, rezyser: rezyser, obsada: obsada, kinoGranie: kinoGranie, czasGrania: czasGrania, actorsAmount: actorsAmount, actorsAll: actorsAll, lista: lista});
+        res.render('views/show_movie_admin', {images: 'plakat',likeStatus: checkLike, likesAmount: likesAmount, dislikesAmount: dislikesAmount, kinaGodziny: kinaGodziny, allCinemaAmount: allCinemaAmount, allCinemaId: allCinemaId, allCinemaNames: allCinemaNames, rezyser: rezyser, obsada: obsada, kinoGranie: kinoGranie, czasGrania: czasGrania, actorsAmount: actorsAmount, actorsAll: actorsAll, lista: lista});
     } else if(rank === 0){
-        res.render('views/show_movie_user', {images: 'plakat',actorsAmount: actorsAmount, rezyser: rezyser, obsada: obsada, czasGrania: czasGrania, lista: lista});
+        res.render('views/show_movie_user', {images: 'plakat',likeStatus: checkLike, likesAmount: likesAmount, dislikesAmount: dislikesAmount, checkUlubiony: checkUlubiony, actorsAmount: actorsAmount, rezyser: rezyser, obsada: obsada, kinaGodziny: kinaGodziny, lista: lista});
     }else{
-        res.render('views/show_movie', {images: 'plakat',actorsAmount: actorsAmount, obsada: obsada, lista: lista});
+        res.render('views/show_movie', {images: 'plakat',likeStatus: -1, likesAmount: likesAmount, dislikesAmount: dislikesAmount, actorsAmount: actorsAmount,rezyser: rezyser, obsada: obsada,kinaGodziny: kinaGodziny, lista: lista});
     }
 });
 
@@ -1213,13 +1397,30 @@ app.get('/ulubione', async (req, res) => {
     let session = req.session.id;
     console.log(`session: ${session}`);
     let rank = await get_rank(db, session);
+    let userId = await get_userId(db, session);
     let lista =[];
     if(rank === 0){
         let id = await get_userId(db, session);
         let amount = await get_favorite_movie_amount(db, id);
         lista = await create_favorite_movie_list(db, id);
+        let allLikes=[];
+
+        let likeList = await get_all_likes_list(db, userId);
+        for(let count =0; count<lista.length; count++){
+            let movieId = lista[count].movieId;
+            let likesAmount = await get_likes_value_amount(db, movieId, 1);
+            let dislikesAmount = await get_likes_value_amount(db, movieId, 0);
+            let likeStatus = await check_like(db, userId, movieId);
+            allLikes.push({movieId: movieId, likesAmount: likesAmount, dislikesAmount: dislikesAmount, likeStatus: likeStatus});
+        }
+        let likeListAmount = likeList.length;
+        let allLikesAmount = allLikes.length;
+        //console.log(`movieId: ${lista[0].movieId}`);
+        //console.log(`allLikes-movieId: ${allLikes[0].movieId}`);
+        //console.log(`LikeListAmount: ${likeListAmount}`);
+        //console.log(`allLikes.length: ${allLikes.length}`);
         //{tytul: name, opis: opis, plakat: path, cinemaAmount: cinemaAmount, movieId: movieIds[id], cinemaList: cinemaList}
-        res.render('views/favorite', {images: 'plakat', amount: amount, lista: lista});
+        res.render('views/favorite', {images: 'plakat', allLikes: allLikes, allLikesAmount:allLikesAmount, likeList: likeList, likeListAmount: likeListAmount, amount: amount, lista: lista});
     } else{
         return res.redirect("/");
     }
@@ -1256,6 +1457,23 @@ app.get('/movieFav/:id', async (req, res) => {
 
     }
     res.redirect('/');
+});
+
+app.get('/movieFav/details/:id', async (req, res) => {
+    let movieId = req.params.id;
+    let sesja = req.session.id;
+    let userId = await get_userId(db, sesja);
+    let rank = await get_rank(db, sesja);
+    let isFavorite = await check_isFavorite(db, userId, movieId);
+    if(rank === 0){
+        if(isFavorite === 0){
+            await add_isFavorite(db, userId, movieId);
+        } else {
+            await  remove_isFavorite(db, userId, movieId);
+        }
+
+    }
+    res.redirect(`/showMovie/${movieId}`);
 });
 
 app.get('/ulubione/movieFav/:id', async (req, res) => {
@@ -1296,13 +1514,28 @@ app.get('/wszystkieFilmy', async (req, res) => {
     let userId = await get_userId(db, sesja);
     let rank = await get_rank(db, sesja);
     let amount = await get_all_movie_amount(db);
-    console.log(`Sprawdzam!`);
-    console.log(`Amount: ${amount}`);
+    let allLikes=[];
+
+    //let checkLike = await check_like(db, userId, id);
+    //console.log(`Sprawdzam!`);
+    //console.log(`Amount: ${amount}`);
     let lista = await create_all_movie_list_with_favorite(db, userId);
+    let likeList = await get_all_likes_list(db, userId);
+    for(let count =0; count<lista.length; count++){
+        let id = lista[count].movieId;
+        let likesAmount = await get_likes_value_amount(db, id, 1);
+        let dislikesAmount = await get_likes_value_amount(db, id, 0);
+        let likeStatus = await check_like(db, userId, id);
+        allLikes.push({movieId: id, likesAmount: likesAmount, dislikesAmount: dislikesAmount, likeStatus: likeStatus});
+
+    }
+    //movieId, likeValue
+    //let likeListAmount = likeList.length;
+    let likeListAmount = allLikes.length;
     if(rank === -1){
         return res.redirect("/");
     } else {
-        res.render('views/all_movies', {images: 'plakat', rank: rank, amount: amount, lista: lista});
+        res.render('views/all_movies', {images: 'plakat', allLikes: allLikes, likeList: likeList, likeListAmount: likeListAmount, rank: rank, amount: amount, lista: lista});
     }
 });
 
@@ -1444,25 +1677,25 @@ app.post('/dodajGodzine',async (req, res) => {
     let rank = await get_rank(db, req.session.id);
     let movieId = parseInt(req.body.paramMovieId);
     let godzina = req.body.paramGodzina;
-    console.log(`Próbuję dodać godzine!`);
-    console.log(`movieId: ${movieId}`);
-    console.log(`Godzina.length: ${godzina.length}`);
-    console.log(`${godzina.length}`);
+    //console.log(`Próbuję dodać godzine!`);
+    //console.log(`movieId: ${movieId}`);
+    //console.log(`Godzina.length: ${godzina.length}`);
+    //console.log(`${godzina.length}`);
     if(rank === 1){
         if(godzina.length>0){
             for(let counter=0; counter<godzina.length; godzina++){
-                console.log(`dodaję do: ${godzina[counter].cinemaName}, dzień: ${godzina[counter].dzien}`);
-                console.log(`Nowa Godzina: ${godzina[counter].godzina}:${godzina[counter].minuta}`);
+               //console.log(`dodaję do: ${godzina[counter].cinemaName}, dzień: ${godzina[counter].dzien}`);
+                //console.log(`Nowa Godzina: ${godzina[counter].godzina}:${godzina[counter].minuta}`);
                 let cinemaName = godzina[counter].cinemaName;
                 let cinemaId = await get_cinemaId(db, cinemaName);
                 let dzien = godzina[counter].dzien;
                 let nowaGodzina = godzina[counter].godzina;
                 let nowaMinuta = godzina[counter].minuta;
                 let check = await check_movie_time(db, cinemaId, movieId, dzien, nowaGodzina, nowaMinuta);
-                console.log(`CHECK czas: ${check}`);
+                //console.log(`CHECK czas: ${check}`);
                 if(check === -1){
                     await insert_playing_time(db, cinemaId, movieId, dzien, nowaGodzina, nowaMinuta);
-                    console.log(`Nowa godzina dodana!`);
+                    //console.log(`Nowa godzina dodana!`);
                 }
             }
         }
@@ -1480,11 +1713,186 @@ app.get('/usunGodzine/:movieId/:cinemaId/:day/:hour/:minutes', async (req, res) 
     let godzina = req.params.hour;
     let minuta = req.params.minutes;
     let rank = await get_rank(db, sesja);
+    if(rank === 1){
+        await remove_one_playing_time(db, cinemaId, movieId, day, godzina, minuta);
+        return res.redirect(`/showMovie/${movieId}`);
+    } else {
+        return res.redirect("/");
+    }
+});
 
+app.post('/like',async (req, res) => {
+    let sesja = req.session.id;
+    let rank = await get_rank(db, sesja);
+    let movieId = parseInt(req.body.paramMovieId);
+    let userId = await get_userId(db, sesja);
+    let value = 1;
+    if(rank === 0){
+        let check = await check_like(db, userId, movieId);
+        //console.log(`sprawdzam like: userId: ${userId}, film: ${movieId}, check: ${check}`);
+        if(check === -1){
+            await add_like_value(db, userId, movieId, value);
+        } else if(check === value){
+            await remove_like(db, userId, movieId);
+        } else {
+            await update_like_value(db, userId, movieId, value);
+        }
+    }
+});
+
+app.get('/wszystkieFilmy/like/:movieId', async (req, res) => {
+    let sesja = req.session.id;
+    let movieId = req.params.movieId;
+    let value = 1;
+    let rank = await get_rank(db, sesja);
+    let userId = await get_userId(db, sesja);
+    if(rank === 0){
+        let check = await check_like(db, userId, movieId);
+        //console.log(`sprawdzam like: userId: ${userId}, film: ${movieId}, check: ${check}`);
+        if(check === -1){
+            await add_like_value(db, userId, movieId, value);
+        } else if(check === value){
+            await remove_like(db, userId, movieId);
+        } else {
+            await update_like_value(db, userId, movieId, value);
+        }
+    }
     if(rank === -1){
         return res.redirect("/");
     } else {
-        res.render('views/all_movies', {images: 'plakat', rank: rank, amount: amount, lista: lista});
+        return res.redirect("/wszystkieFilmy");
+    }
+});
+
+app.get('/wszystkieFilmy/dislike/:movieId', async (req, res) => {
+    let sesja = req.session.id;
+    let movieId = parseInt(req.params.movieId);
+    let value = 0;
+    let rank = await get_rank(db, sesja);
+    let userId = await get_userId(db, sesja);
+    if(rank === 0){
+        let check = await check_like(db, userId, movieId);
+        //console.log(`sprawdzam like: userId: ${userId}, film: ${movieId}, check: ${check}`);
+        if(check === -1){
+            await add_like_value(db, userId, movieId, value);
+        } else if(check === value){
+            await remove_like(db, userId, movieId);
+        } else {
+            await update_like_value(db, userId, movieId, value);
+        }
+    }
+    if(rank === -1){
+        return res.redirect("/");
+    } else {
+        return res.redirect("/wszystkieFilmy");
+    }
+});
+
+app.get('/ulubione/like/:movieId', async (req, res) => {
+    let sesja = req.session.id;
+    let movieId = req.params.movieId;
+    let value = 1;
+    let rank = await get_rank(db, sesja);
+    let userId = await get_userId(db, sesja);
+    if(rank === 0){
+        let check = await check_like(db, userId, movieId);
+        //console.log(`sprawdzam like: userId: ${userId}, film: ${movieId}, check: ${check}`);
+        if(check === -1){
+            await add_like_value(db, userId, movieId, value);
+        } else if(check === value){
+            await remove_like(db, userId, movieId);
+        } else {
+            await update_like_value(db, userId, movieId, value);
+        }
+    }
+    if(rank === -1){
+        return res.redirect("/");
+    } else {
+        return res.redirect("/ulubione");
+    }
+});
+
+app.get('/ulubione/dislike/:movieId', async (req, res) => {
+    let sesja = req.session.id;
+    let movieId = parseInt(req.params.movieId);
+    let value = 0;
+    let rank = await get_rank(db, sesja);
+    let userId = await get_userId(db, sesja);
+    if(rank === 0){
+        let check = await check_like(db, userId, movieId);
+        //console.log(`sprawdzam like: userId: ${userId}, film: ${movieId}, check: ${check}`);
+        if(check === -1){
+            await add_like_value(db, userId, movieId, value);
+        } else if(check === value){
+            await remove_like(db, userId, movieId);
+        } else {
+            await update_like_value(db, userId, movieId, value);
+        }
+    }
+    if(rank === -1){
+        return res.redirect("/");
+    } else {
+        return res.redirect("/ulubione");
+    }
+});
+
+app.get('/dislike/:movieId', async (req, res) => {
+    let sesja = req.session.id;
+    let movieId = parseInt(req.params.movieId);
+    let value = 0;
+    let rank = await get_rank(db, sesja);
+    let userId = await get_userId(db, sesja);
+    if(rank === 0){
+        let check = await check_like(db, userId, movieId);
+        //console.log(`sprawdzam like: userId: ${userId}, film: ${movieId}, check: ${check}`);
+        if(check === -1){
+            await add_like_value(db, userId, movieId, value);
+        } else if(check === value){
+            await remove_like(db, userId, movieId);
+        } else {
+            await update_like_value(db, userId, movieId, value);
+        }
+    }
+    return res.redirect("/");
+});
+
+app.get('/like/:movieId', async (req, res) => {
+    let sesja = req.session.id;
+    let movieId = parseInt(req.params.movieId);
+    let value = 1;
+    let rank = await get_rank(db, sesja);
+    let userId = await get_userId(db, sesja);
+    if(rank === 0){
+        let check = await check_like(db, userId, movieId);
+        //console.log(`sprawdzam like: userId: ${userId}, film: ${movieId}, check: ${check}`);
+        if(check === -1){
+            await add_like_value(db, userId, movieId, value);
+        } else if(check === value){
+            await remove_like(db, userId, movieId);
+        } else {
+            await update_like_value(db, userId, movieId, value);
+        }
+    }
+    return res.redirect("/");
+});
+
+
+
+app.post('/dislike',async (req, res) => {
+    let sesja = req.session.id;
+    let rank = await get_rank(db, sesja);
+    let movieId = parseInt(req.body.paramMovieId);
+    let userId = await get_userId(db, sesja);
+    let value = 0;
+    if(rank === 0){
+        let check = await check_like(db, userId, movieId);
+        if(check === -1){
+            await add_like_value(db, userId, movieId, value);
+        } else if(check === value){
+            await remove_like(db, userId, movieId);
+        } else {
+            await update_like_value(db, userId, movieId, value);
+        }
     }
 });
 

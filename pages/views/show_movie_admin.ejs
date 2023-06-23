@@ -137,9 +137,13 @@
                                 <li class="wypisany_dzien_tygodnia">Niedziela:</li>
                                 <%wybranyDzien=6;%>
                             <%}%>
-                        <% if(kinoGranie[i].czasGrania[dzien].dniGodziny[wybranyDzien].godzinyIlosc > 0){ %>
-                            <% for(let godzina=0; godzina<kinoGranie[i].czasGrania[dzien].dniGodziny[wybranyDzien].godziny.length; godzina++){ %>
-                            <li class="dzien_tygodnia"><a href="#" class="dodana_godzina"><%=kinoGranie[i].czasGrania[dzien].dniGodziny[wybranyDzien].godziny[godzina].godzina%>:<%=kinoGranie[i].czasGrania[dzien].dniGodziny[wybranyDzien].godziny[godzina].minuta%></a></li>
+                        <% if(kinaGodziny[i].dniGodziny[dzien].iloscGodzin > 0){ %>
+                            <% for(let godzina=0; godzina<kinaGodziny[i].dniGodziny[dzien].iloscGodzin; godzina++){ %>
+                            <% if(kinaGodziny[i].dniGodziny[dzien].godziny[godzina].minuta.toString().length === 1) {%>
+                                <li class="dzien_tygodnia"><a href='http://localhost:3000/usunGodzine/<%=lista[0].movieId%>/<%=kinaGodziny[i].kinoId%>/<%=dzien%>/<%=kinaGodziny[i].dniGodziny[dzien].godziny[godzina].godzina%>/<%=kinaGodziny[i].dniGodziny[dzien].godziny[godzina].minuta%>' class="dodana_godzina"><%=kinaGodziny[i].dniGodziny[dzien].godziny[godzina].godzina%>:0<%=kinaGodziny[i].dniGodziny[dzien].godziny[godzina].minuta%></a></li>
+                            <%} else{%>
+                                <li class="dzien_tygodnia"><a href='http://localhost:3000/usunGodzine/<%=lista[0].movieId%>/<%=kinaGodziny[i].kinoId%>/<%=dzien%>/<%=kinaGodziny[i].dniGodziny[dzien].godziny[godzina].godzina%>/<%=kinaGodziny[i].dniGodziny[dzien].godziny[godzina].minuta%>' class="dodana_godzina"><%=kinaGodziny[i].dniGodziny[dzien].godziny[godzina].godzina%>:<%=kinaGodziny[i].dniGodziny[dzien].godziny[godzina].minuta%></a></li>
+                            <%}%>
                             <%}%>
                         <%} else {%>
                             <li class="dzien_tygodnia"><p>Nie dodano żadnych godzin</p></li>
