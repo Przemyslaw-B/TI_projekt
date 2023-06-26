@@ -642,6 +642,30 @@ button wyloguj{
     margin-left: 2rem;
 }
 
+#index_button_like{
+    border: none;
+    appearance: none;
+    margin-top: 1rem;
+    background: inherit;
+    width: 2rem;
+    height: 2rem;
+    object-fit: fill;
+    float: left;
+    margin-left: 2rem;
+}
+
+#index_button_dislike{
+    border: none;
+    appearance: none;
+    margin-top: 1rem;
+    background: inherit;
+    width: 2rem;
+    height: 2rem;
+    object-fit: fill;
+    float: left;
+    margin-left: 2rem;
+}
+
 #button_dislike{
     border: none;
     appearance: none;

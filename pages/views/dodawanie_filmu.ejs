@@ -7,6 +7,17 @@
     <script type="text/javascript" src="/scripts/skrypt.js"></script>
 </head>
 <body onload="logowanie();">
+
+<% if(msg === 0){ %>
+    <script>
+        alert("Nie udało się dodać Filmu.");
+    </script>
+<%} else if(msg === 1){%>
+    <script>
+        alert("Film dodany pomyślnie.");
+    </script>
+<%}%>
+
 <div id="kontener">
     <div id="pasekMenu">
         <ul>

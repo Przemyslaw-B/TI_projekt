@@ -21,7 +21,7 @@ function logowanie(){
 
     const element_loguj=document.getElementById('loguj');
     if(element_loguj){
-        element_loguj.addEventListener('click', function(event) {
+        element_loguj.addEventListener('click',async function(event) {
             let username=document.getElementById('wsp_login').value;
             let password=document.getElementById('wsp_haslo').value;
             const http = new XMLHttpRequest()
@@ -31,8 +31,11 @@ function logowanie(){
             params.paramLogin = username;
             params.paramPassword = password;
             http.send(JSON.stringify(params));
-            window.location="http://localhost:3000/sesja";
-            http.onload = () => console.log(http.responseText);
+            //window.location="http://localhost:3000/sesja";
+            //http.onload = () => console.log(http.responseText);
+            const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+            await delay(100);
+            window.location.reload();
         });
     }
 
@@ -60,7 +63,7 @@ function logowanie(){
 
     const element_zatwierdz_rejestracje=document.getElementById('potwierdz_rejestracje');
     if(element_zatwierdz_rejestracje){
-        element_zatwierdz_rejestracje.addEventListener('click', function(event) {
+        element_zatwierdz_rejestracje.addEventListener('click',async function(event) {
             let username=document.getElementById('rejestracja_uzytkownik').value;
             let password=document.getElementById('rejestracja_haslo').value;
             let passwordRep=document.getElementById('rejestracja_powt_haslo').value;
@@ -75,13 +78,16 @@ function logowanie(){
             params.paramEmail = email;
             http.send(JSON.stringify(params));
             //window.location="http://localhost:3000/";
-            http.onload = () => console.log(http.responseText);
+            //http.onload = () => console.log(http.responseText);
+            const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+            await delay(100);
+            window.location.reload();
         });
     }
 
     const element_zatwierdz_kino=document.getElementById('ok');
     if(element_zatwierdz_kino){
-        element_zatwierdz_kino.addEventListener('click', function(event) {
+        element_zatwierdz_kino.addEventListener('click',async function(event) {
             let nazwaKina=document.getElementById('dodaj_kino').value;
             const http = new XMLHttpRequest()
             http.open("POST", "http://localhost:3000/dodajKino");
@@ -89,15 +95,19 @@ function logowanie(){
             var params = new Object();
             params.paramNazwaKina = nazwaKina;
             http.send(JSON.stringify(params));
-            //window.location="http://localhost:3000/";
-            http.onload = () => console.log(http.responseText);
+            //window.location="http://localhost:3000/dodajKino";
+            //http.onload = () => console.log(http.responseText);
+            //setTimeout(donothing, '500');
+            //window.location="http://localhost:3000/dodajKino";
+            const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+            await delay(100);
             window.location.reload();
         });
     }
 
     const element_dodaj_film=document.getElementById('ok_film');
     if(element_dodaj_film){
-        element_dodaj_film.addEventListener('click', function(event) {
+        element_dodaj_film.addEventListener('click',async function(event) {
             let sciezka = "";
             let plik = document.getElementById('file');
             if(plik.files[0]) {
@@ -121,7 +131,9 @@ function logowanie(){
 
             http.send(JSON.stringify(params));
             //window.location="http://localhost:3000/";
-            http.onload = () => console.log(http.responseText);
+            const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+            await delay(100);
+            window.location.reload();
         });
     }
 

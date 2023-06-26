@@ -11,7 +11,15 @@
     <title>Baza Repertuarów Krakowskich Kin</title>
 </head>
 <body onload="logowanie();">
+
+<% if(msg === 0){ %>
+    <script>
+        alert("Błędne dane logowania.");
+    </script>
+<%}%>
+
 <div id="kontener">
+
     <div id="pasekMenu">
         <ul>
             <li><a href='http://localhost:3000/'> Strona główna</a></li>
@@ -27,7 +35,9 @@
             </form>
         </ul>
     </div>
+
 </div>
+
 
 <div class="srodek">
     <ul class = lista_film>
@@ -91,6 +101,7 @@
         <% } %>
     </ul>
 </div>
+
 
 
 </body>

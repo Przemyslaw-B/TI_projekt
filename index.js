@@ -1112,6 +1112,16 @@ async function remove_all_movie_playing_time_from_cinema(db, cinemaId, movieId){
 app.get('/mainPage', async (req, res) => {
     let amount = parseInt(req.cookies["movieAmount"]);
     let lista = await create_movie_list(db, amount);
+    let sesja = req.session.id;
+    let rank = await get_rank(db, sesja);
+
+    let msg;
+    if(req.cookies['logowanie_msg']){
+        msg = parseInt(req.cookies['logowanie_msg']);
+    } else{
+        msg=-1;
+    }
+    res.cookie("logowanie_msg", -1);
 
     let allLikes = [];
     for(let count =0; count<lista.length; count++){
@@ -1124,8 +1134,12 @@ app.get('/mainPage', async (req, res) => {
     }
     //movieId, likeValue
     let allLikesAmount = allLikes.length;
-
-    res.render('views/index', {images: 'plakat', allLikes: allLikes, allLikesAmount: allLikesAmount, amount: amount, lista: lista});
+    if(rank === 0){
+        return res.redirect("/login")
+    } else if( rank === 1){
+        return res.redirect("/loginAdmin")
+    }
+    res.render('views/index', {images: 'plakat',userRank: rank, msg: msg, allLikes: allLikes, allLikesAmount: allLikesAmount, amount: amount, lista: lista});
 });
 
 app.get('/', (req, res) => {
@@ -1138,6 +1152,7 @@ app.get('/', (req, res) => {
 app.get('/login', async (req, res) => {
     let amount = parseInt(req.cookies["movieAmount"]);
     let sesja = req.session.id;
+
     let rank = await get_rank(db, sesja);
     if(rank === 0){
         let userId = await get_userId(db, sesja);
@@ -1155,7 +1170,7 @@ app.get('/login', async (req, res) => {
         //movieId, likeValue
         let likeListAmount = likeList.length;
         let allLikesAmount = allLikes.length;
-        res.render('views/loggedin', {images: 'plakat',likeList: likeList, allLikes: allLikes, allLikesAmount: allLikesAmount, likeListAmount: likeListAmount, likeList: likeList, amount: amount, lista: lista});
+        res.render('views/loggedin', {images: 'plakat', likeList: likeList, allLikes: allLikes, allLikesAmount: allLikesAmount, likeListAmount: likeListAmount, likeList: likeList, amount: amount, lista: lista});
     } else if(rank === 1){
         res.redirect("/loginAdmin");
     } else{
@@ -1220,8 +1235,32 @@ app.get('/reset', (req, res) => {
     res.render('views/reset', {images: 'plakat'});
 });
 
-app.get('/rejestracja', (req, res) => {
-    res.render('views/utworz_konto', {images: 'plakat'});
+app.get('/rejestracja', async (req, res) => {
+    let msg;
+    let sesja = req.session.id;
+    let rank = await get_rank(db, sesja);
+    let value;
+    let msgL=-1;
+    if(req.cookies['logowanie_msg']){
+        msgL=parseInt(req.cookies['logowanie_msg']);
+        res.cookie("logowanie_msg", -1);
+    }
+    if(req.cookies['rejestracja_msg']){
+        msg = parseInt(req.cookies['rejestracja_msg']);
+        if(msg === 1){
+            value = "Konto zostało utworzone.";
+        } else {
+            value = "Konto nie zostało utworzone. Podane dane są błędne lub podobny użytkownik już istnieje.";
+        }
+    } else{
+        msg=-1;
+    }
+    res.cookie("rejestracja_msg", -1);
+    if(rank === -1){
+        res.render('views/utworz_konto', {images: 'plakat', msg: msg, value: value, msgL: msgL});
+    } else {
+        res.redirect('/');
+    }
 });
 
 app.post('/rejestracja', async (req, res) => {
@@ -1231,11 +1270,19 @@ app.post('/rejestracja', async (req, res) => {
     let email = req.body.paramEmail;
     let checkUsername = await check_username(db, username);
     let checkEmail = await check_mail(db, email);
+    let msgL=-1;
+    if(req.cookies.logowanie_msg){
+        req.cookies.logowanie_msg;
+    }
+
     if(checkEmail === 0 && checkUsername === 0 && password === passwordRep && username !== "" && password !== "" && email !== ""){
         await insert_user(db, username, password, email);
+        res.cookie("rejestracja_msg", 1);
         return res.redirect("/");
     } else{
-        return res.redirect("/rejestracja");
+        res.cookie("rejestracja_msg", 0);
+        let value = "Konto nie zostało utworzone. Podane dane są błędne lub podobny użytkownik już istnieje.";
+        res.render('views/utworz_konto', {images: 'plakat', msg: 0, value: value, msgL: msgL});
     }
 });
 
@@ -1248,9 +1295,11 @@ app.post('/login/potwierdz', async (req, res) => {
     const id = await get_id(db, username, password);
     if(id>0){
         await set_session(db, id, req.session.id);
+        res.cookie("logowanie_msg", 1);
         return res.redirect("/sesja");
     } else{
-        return res.redirect("/");
+        res.cookie("logowanie_msg", 0);
+        res.render('views/error', {msg: 0, value: "Błędne dane logowania!."});
     }
 });
 
@@ -1258,11 +1307,19 @@ app.post('/dodajKino', async (req, res) => {
     let nazwaKina = req.body.paramNazwaKina;
     let checkNazwaKina = await check_nazwaKina(db, nazwaKina);
     let rank = await get_rank(db, req.session.id);
+    if(checkNazwaKina === 0 && nazwaKina !== ""){
+        res.cookie("dodajKino_msg", 1);
+    }else{
+        res.cookie("dodajKino_msg", 0);
+    }
     if(checkNazwaKina === 0 && nazwaKina !== "" && rank === 1){
         await insert_kino(db, nazwaKina);
-        return res.redirect("/");
+        console.log(`Dodano kino`);
+        res.render('views/dodawanie_kina', {msg: 1});
     } else{
-        return res.redirect("/dodajKino");
+        console.log(`Nie dodano kina`);
+        //return res.redirect("/dodajKino");
+        res.render('views/dodawanie_kina', {msg: 0});
     }
 });
 
@@ -1293,17 +1350,27 @@ app.post('/dodajFilm', async (req, res) => {
         } else{
             await insert_movie(db, tytul, rokProdukcji, rezyser, opis, sciezka);
         }
-
-        return res.redirect("/");
+        res.cookie("dodajFilm_msg", 1);
+        res.render('views/dodawanie_filmu', {msg: 1});
     } else{
-        return res.redirect("/dodajFilm");
+        res.cookie("dodajKino_msg", 0);
+        res.render('views/dodawanie_filmu', {msg: 0});
     }
 });
 
 app.get('/dodajKino', async (req, res) => {
+
+    let msg;
+    if(req.cookies['dodajKino_msg']){
+        msg = parseInt(req.cookies['dodajKino_msg']);
+    } else{
+        msg=-1;
+    }
+    res.cookie("dodajKino_msg", -1);
+    console.log(`cookie msg: ${msg}`);
     let rank = await get_rank(db, req.session.id);
-    if(rank === 1){
-        res.render('views/dodawanie_kina');
+    if(rank === 1 ){
+        res.render('views/dodawanie_kina', {msg: msg});
     } else{
         return res.redirect("/");
     }
@@ -1333,14 +1400,30 @@ app.get('/pokazListe', async (req, res) => {
 
 app.get('/dodajFilm', async (req, res) => {
     let rank = await get_rank(db, req.session.id);
+    let msg;
+    if(req.cookies['dodajKino_msg']){
+        msg = parseInt(req.cookies['dodajKino_msg']);
+    } else{
+        msg=-1;
+    }
+    res.cookie("dodajKino_msg", -1);
+
     if(rank === 1){
-        res.render('views/dodawanie_filmu');
+        res.render('views/dodawanie_filmu', {msg: msg});
     } else{
         return res.redirect("/");
     }
 });
 
 app.get('/showMovie/:id', async (req, res) => {
+    let msg;
+    if(req.cookies['logowanie_msg']){
+        msg = parseInt(req.cookies['logowanie_msg']);
+    } else{
+        msg=-1;
+    }
+    res.cookie("logowanie_msg", -1);
+
     let id = req.params.id;
     let session = req.session.id;
     let rank = await get_rank(db, session);
@@ -1385,11 +1468,11 @@ app.get('/showMovie/:id', async (req, res) => {
         res.cookie("allCinemaAmount", allCinemaAmount);
         res.cookie("cinemaAmount", lista[0].cinemaAmount);
         res.cookie("actorsMovieAmount", obsada.length);
-        res.render('views/show_movie_admin', {images: 'plakat',likeStatus: checkLike, likesAmount: likesAmount, dislikesAmount: dislikesAmount, kinaGodziny: kinaGodziny, allCinemaAmount: allCinemaAmount, allCinemaId: allCinemaId, allCinemaNames: allCinemaNames, rezyser: rezyser, obsada: obsada, kinoGranie: kinoGranie, czasGrania: czasGrania, actorsAmount: actorsAmount, actorsAll: actorsAll, lista: lista});
+        res.render('views/show_movie_admin', {images: 'plakat',msg: msg, likeStatus: checkLike, likesAmount: likesAmount, dislikesAmount: dislikesAmount, kinaGodziny: kinaGodziny, allCinemaAmount: allCinemaAmount, allCinemaId: allCinemaId, allCinemaNames: allCinemaNames, rezyser: rezyser, obsada: obsada, kinoGranie: kinoGranie, czasGrania: czasGrania, actorsAmount: actorsAmount, actorsAll: actorsAll, lista: lista});
     } else if(rank === 0){
         res.render('views/show_movie_user', {images: 'plakat',likeStatus: checkLike, likesAmount: likesAmount, dislikesAmount: dislikesAmount, checkUlubiony: checkUlubiony, actorsAmount: actorsAmount, rezyser: rezyser, obsada: obsada, kinaGodziny: kinaGodziny, lista: lista});
     }else{
-        res.render('views/show_movie', {images: 'plakat',likeStatus: -1, likesAmount: likesAmount, dislikesAmount: dislikesAmount, actorsAmount: actorsAmount,rezyser: rezyser, obsada: obsada,kinaGodziny: kinaGodziny, lista: lista});
+        res.render('views/show_movie', {images: 'plakat',msg: msg, likeStatus: -1, likesAmount: likesAmount, dislikesAmount: dislikesAmount, actorsAmount: actorsAmount,rezyser: rezyser, obsada: obsada,kinaGodziny: kinaGodziny, lista: lista});
     }
 });
 
@@ -1864,6 +1947,7 @@ app.get('/like/:movieId', async (req, res) => {
     let userId = await get_userId(db, sesja);
     if(rank === 0){
         let check = await check_like(db, userId, movieId);
+        console.log(`userId: ${userId}, movieId: ${movieId}, value${value}, chaeck: ${check}`);
         //console.log(`sprawdzam like: userId: ${userId}, film: ${movieId}, check: ${check}`);
         if(check === -1){
             await add_like_value(db, userId, movieId, value);

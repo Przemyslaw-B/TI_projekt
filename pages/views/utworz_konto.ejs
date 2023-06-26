@@ -7,6 +7,22 @@
     <script type="text/javascript" src="/scripts/skrypt.js"></script>
 </head>
 <body onload="logowanie();">
+
+<% if(msgL === 0){ %>
+    <script>
+        alert("Błędne dane logowania.");
+    </script>
+<%}%>
+<% if(msg === 0){ %>
+    <script>
+        alert("Konto nie zostało utworzone. Podane dane są błędne lub podobny użytkownik już istnieje.");
+    </script>
+<%} else if(msg === 1){ %>
+    <script>
+        alert("Konto zostało utworzone.");
+    </script>
+<%}%>
+
 <div id="kontener">
     <div id="pasekMenu">
         <ul>

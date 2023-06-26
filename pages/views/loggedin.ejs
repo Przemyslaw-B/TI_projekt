@@ -40,7 +40,7 @@
                     <div class="zawartosc_tytul">
                         <a class="tytul" href ='http://localhost:3000/showMovie/<%=lista[i].movieId%>'> <%=lista[i].tytul%></a>
 
-                        <button id="button_like">
+                        <button id="index_button_like">
                             <% for(let count=0; count < allLikesAmount; count++){ %>
                                 <% if(allLikes[count].movieId === lista[i].movieId){ %>
                                     <% if(allLikes[count].likeStatus === 1){ %>
@@ -51,7 +51,7 @@
                                 <%}%>
                             <%}%>
                         </button>
-                        <button id="button_dislike">
+                        <button id="index_button_dislike">
                             <% for(let count=0; count < allLikesAmount; count++){ %>
                                 <% if(allLikes[count].movieId === lista[i].movieId){ %>
                                     <% if(allLikes[count].likeStatus === 0){ %>

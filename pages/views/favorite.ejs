@@ -81,8 +81,14 @@
 
                     <div class="zawartosc_kina">
                         <ul class="lista_kin">
+                            <% if(lista[i].cinemaAmount === 0){ %>
+                                <li class="opcja_kina">
+                                    <div class = "tlo_kina">
+                                        <p class="kino_tresc">Film nie jest obecnie grany w kinach.</p>
+                                    </div>
+                                </li>
+                            <%}%>
                             <% for(let j=0; j < lista[i].cinemaAmount; j++) {%>
-
                             <li class="opcja_kina">
                                 <div class = "tlo_kina">
                                     <p class="kino_tresc"><%=lista[i].cinemaList[j]%></p>
